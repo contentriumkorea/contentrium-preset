@@ -2,7 +2,7 @@
 param(
     [string]$PayloadRoot,
     [string]$Output,
-    [ValidatePattern('^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$')][string]$Version = '1.1.0'
+    [ValidatePattern('^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$')][string]$Version = '1.1.1'
 )
 $ErrorActionPreference = 'Stop'
 if (-not $PayloadRoot) { $PayloadRoot = Split-Path -Parent $PSScriptRoot }

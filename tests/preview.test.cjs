@@ -1,5 +1,32 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const preview=require('../preview.js');
+test('preview subjects follow catalog category paths rather than names or shared numeric types',()=>{
+ const catalog=require('../library/catalog.json'),counts={};
+ for(const entry of catalog.entries){const kind=preview.subjectFor(entry).kind;counts[kind]=(counts[kind]||0)+entry.variants.length;}
+ assert.deepEqual(counts,{object:50,text:25,title:6,scene:26,shape:3});
+ assert.equal(preview.subjectFor({name:'Camera Text',category:['Animation Presets','Motion Presets']}).kind,'object');
+ assert.equal(preview.subjectFor({name:'Motion',category:['Transitions','Camera']}).kind,'scene');
+ assert.equal(preview.subjectFor({name:'Title Camera',category:[]}).kind,'unknown');
+});
+test('text fallback paints glyphs without drawing any image while object fallback draws only its transparent logo',()=>{
+ function context(){const draws=[],drawArgs=[],texts=[];return{draws,drawArgs,texts,save(){},restore(){},clearRect(){},fillRect(){},translate(){},rotate(){},scale(){},fillText(text){texts.push(text);},drawImage(image,...args){draws.push(image);drawArgs.push(args);}};}
+ const logo={width:480,height:240},before={width:1280,height:720},after={width:1280,height:720},resources={logo,before,after};
+ const text=context();preview.renderFallback(text,{category:['Animation Presets','Text Presets']},null,0,resources);
+ assert.equal(text.draws.length,0);assert.equal(text.texts.join(''),'CONTENTRIUM');
+ const object=context();preview.renderFallback(object,{category:['Animation Presets','Motion Presets']},null,0,resources);
+ assert.deepEqual(object.draws,[logo]);assert.equal(object.texts.length,0);
+ assert.deepEqual(object.drawArgs[0],[143.75,84.375,112.5,56.25]);
+ const previousDocument=global.document,shadowCalls=[],squareLogo={width:1254,height:1254};
+ global.document={createElement(){return{getContext(){return{drawImage(...args){shadowCalls.push(args);},createLinearGradient(){return{addColorStop(){}};},fillRect(){}};}};}};
+ try{
+  preview.renderFallback(context(),{category:['Animation Presets','Motion Presets']},{kind:'shadow',controls:[{name:'Angle',value:0},{name:'Length',value:600}]},0,{logo:squareLogo});
+  assert.equal(Math.max(...shadowCalls.map(args=>args[1]))-143.75,54);
+ }finally{if(previousDocument===undefined)delete global.document;else global.document=previousDocument;}
+ const scene=context();preview.renderFallback(scene,{category:['Transitions','Camera']},null,0,resources);
+ assert.deepEqual(scene.draws,[before]);assert.equal(scene.texts.length,0);
+ const afterCut=context();preview.renderFallback(afterCut,{category:['Transitions','Camera']},{kind:'camera',duration:1,cutOffset:.3},.901,resources);
+ assert.deepEqual(afterCut.draws,[after]);
+});
 test('transition cut selects two different authored scene identities without crossfade',()=>{
  const profile={kind:'camera',duration:1,cutOffset:.3,fidelity:'nested-motion-pending'};
  assert.equal(preview.sampleProfile(profile,.899).sceneId,'A');

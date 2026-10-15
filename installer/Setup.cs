@@ -23,8 +23,8 @@ using Microsoft.Win32;
 [assembly: AssemblyProduct("Contentrium Preset")]
 [assembly: AssemblyCompany("Contentrium")]
 [assembly: AssemblyDescription("Contentrium Preset Windows Installer")]
-[assembly: AssemblyVersion("1.1.0.0")]
-[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: AssemblyVersion("1.1.1.0")]
+[assembly: AssemblyFileVersion("1.1.1.0")]
 
 namespace ContentriumPreset {
     public sealed class Options {

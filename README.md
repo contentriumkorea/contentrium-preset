@@ -32,7 +32,7 @@ After Effects에서 사용하는 프리셋 패널입니다. 43개 프리셋과 1
 
 **Browse**에서 카테고리·검색·즐겨찾기로 프리셋을 고릅니다. 카드를 선택하면 카드 안에 변형 목록이 펼쳐집니다. **View all at once**로 모든 변형을 별도 카드로 볼 수 있고, **Back**으로 돌아옵니다. 선택한 변형을 **In / Out / Both** 또는 **Apply**로 적용하고 **Edit**에서 레이어의 컨트롤을 조정합니다.
 
-미리보기에는 자체 제작한 서로 다른 A/B 장면을 사용합니다. After Effects에서 렌더한 클립이 포함된 항목은 해당 클립을 재생합니다. 미리보기는 프리셋의 동작 예시이며, 선택 레이어의 실시간 렌더 기능은 아닙니다.
+미리보기는 프리셋 종류에 맞는 피사체를 사용합니다. 개체 애니메이션은 투명 로고 PNG, 텍스트·타이틀은 배경 이미지 없는 글자, 장면 전환은 보라·청록과 코럴·골드의 서로 다른 A/B 장면으로 구분합니다. After Effects에서 렌더한 클립이 포함된 항목은 해당 클립을 재생합니다. 미리보기는 프리셋의 동작 예시이며, 선택 레이어의 실시간 렌더 기능은 아닙니다.
 
 개인 효과음은 설치 패키지와 별도의 사용자 오디오 라이브러리에 등록할 수 있습니다. 업데이트·제거 시 이 폴더는 유지됩니다. [오디오 등록 방법](docs/user-guide.md#개인-오디오-라이브러리)을 참고하세요.
 
@@ -48,7 +48,7 @@ After Effects에서 사용하는 프리셋 패널입니다. 43개 프리셋과 1
 
 개발·검증 명령은 소스 저장소를 내려받은 프로젝트 루트에서 실행합니다.
 
-Windows PowerShell에서 `node tools/build-preview-profiles.cjs`, `npm run verify`를 실행한 뒤 `./packaging/build-release.ps1 -Version 1.1.0`으로 설치 파일과 포터블 패키지를 생성합니다. 제품·CEP·카탈로그 버전은 모두 배포 버전과 같아야 합니다.
+Windows PowerShell에서 `node tools/build-preview-profiles.cjs`, `npm run verify`를 실행한 뒤 `./packaging/build-release.ps1 -Version 1.1.1`으로 설치 파일과 포터블 패키지를 생성합니다. 제품·CEP·카탈로그 버전은 모두 배포 버전과 같아야 합니다.
 
 [검증 결과와 지원 범위](docs/verification.md) · [MIT 라이선스](LICENSE)
 
