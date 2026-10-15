@@ -19,4 +19,6 @@ After Effects용 프리셋 패널의 첫 배포입니다. 43개 프리셋과 110
 
 검증 환경은 Windows 11, After Effects 2026(26.5)입니다. 애니메이션 미리보기는 대표 움직임을 보여주며, 선택 레이어의 실시간 렌더 기능은 아닙니다.
 
+공개 최신 링크의 설치파일로 자동 다운로드·전체 설치를 완료하고, Windows 등록과 설치 파일 11개의 SHA-256 일치를 확인했습니다. AE 재시작 후 연결·목록·미리보기·즐겨찾기 보존도 확인했습니다. 설치파일은 44KiB, 전체 포터블 패키지는 약 135KiB입니다.
+
 [사용 안내](https://github.com/contentriumkorea/contentrium-preset/blob/main/docs/user-guide.md) · [검증 기록과 지원 범위](https://github.com/contentriumkorea/contentrium-preset/blob/main/docs/verification.md)
