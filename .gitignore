@@ -15,6 +15,8 @@
 /runtime-tests/
 /test-output/
 /qa-output/
+/output/
+/.playwright-cli/
 **/install-receipt.json
 **/.contentrium-install.json
 /installer/test-results*.json

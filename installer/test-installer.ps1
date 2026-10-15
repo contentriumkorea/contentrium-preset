@@ -3,6 +3,15 @@ param([string]$Setup)
 $ErrorActionPreference = 'Stop'
 if (-not $Setup) { $Setup = Join-Path $PSScriptRoot 'out\Setup.exe' }
 $Setup = [IO.Path]::GetFullPath($Setup)
+# Reflection over the .NET Framework installer uses System.Web.Extensions.
+# PowerShell 7 runs on .NET and cannot load that Framework-only serializer.
+if ($PSVersionTable.PSEdition -eq 'Core') {
+    $windowsPowerShell = Join-Path $env:WINDIR 'System32\WindowsPowerShell\v1.0\powershell.exe'
+    if (-not (Test-Path -LiteralPath $windowsPowerShell -PathType Leaf)) { throw 'Windows PowerShell is required for .NET Framework installer tests.' }
+    & $windowsPowerShell -NoProfile -File $PSCommandPath -Setup $Setup
+    if ($LASTEXITCODE -ne 0) { throw 'Windows PowerShell installer tests failed.' }
+    return
+}
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $testRoot = Join-Path ([IO.Path]::GetTempPath()) ('ContentriumPreset-QA-' + [guid]::NewGuid().ToString('N'))
 [IO.Directory]::CreateDirectory($testRoot) | Out-Null

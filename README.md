@@ -30,9 +30,15 @@ After Effects에서 사용하는 프리셋 패널입니다. 43개 프리셋과 1
 
 ## 사용
 
-**Browse**에서 카테고리·검색·즐겨찾기로 프리셋을 고릅니다. 변형을 선택하고 **In / Out / Both** 또는 **Apply**를 누릅니다. **Edit**에서 선택한 레이어의 컨트롤을 조정합니다. 애니메이션 미리보기는 프리셋의 움직임을 보여주는 대표 예시이며, 선택 레이어의 실제 렌더 결과는 내용과 크기에 따라 달라집니다.
+**Browse**에서 카테고리·검색·즐겨찾기로 프리셋을 고릅니다. 카드를 선택하면 카드 안에 변형 목록이 펼쳐집니다. **View all at once**로 모든 변형을 별도 카드로 볼 수 있고, **Back**으로 돌아옵니다. 선택한 변형을 **In / Out / Both** 또는 **Apply**로 적용하고 **Edit**에서 레이어의 컨트롤을 조정합니다.
+
+미리보기에는 자체 제작한 서로 다른 A/B 장면을 사용합니다. After Effects에서 렌더한 클립이 포함된 항목은 해당 클립을 재생합니다. 미리보기는 프리셋의 동작 예시이며, 선택 레이어의 실시간 렌더 기능은 아닙니다.
+
+개인 효과음은 설치 패키지와 별도의 사용자 오디오 라이브러리에 등록할 수 있습니다. 업데이트·제거 시 이 폴더는 유지됩니다. [오디오 등록 방법](docs/user-guide.md#개인-오디오-라이브러리)을 참고하세요.
 
 [자세한 사용 안내](docs/user-guide.md)
+
+타이틀의 기본 글꼴은 Montserrat ExtraBold·Black·Bold입니다. 글꼴 파일은 포함하지 않으며, [타이틀별 글꼴 안내](docs/user-guide.md#타이틀-기본-글꼴)에서 실제 이름과 변경 방법을 확인할 수 있습니다.
 
 ![Contentrium Preset Browse](docs/browse.png)
 
@@ -42,7 +48,7 @@ After Effects에서 사용하는 프리셋 패널입니다. 43개 프리셋과 1
 
 개발·검증 명령은 소스 저장소를 내려받은 프로젝트 루트에서 실행합니다.
 
-Windows PowerShell에서 `./packaging/build-release.ps1 -Version 1.0.0`을 실행하면 설치 파일과 포터블 패키지를 함께 생성합니다.
+Windows PowerShell에서 `node tools/build-preview-profiles.cjs`, `npm run verify`를 실행한 뒤 `./packaging/build-release.ps1 -Version 1.1.0`으로 설치 파일과 포터블 패키지를 생성합니다. 제품·CEP·카탈로그 버전은 모두 배포 버전과 같아야 합니다.
 
 [검증 결과와 지원 범위](docs/verification.md) · [MIT 라이선스](LICENSE)
 
@@ -51,3 +57,14 @@ Windows PowerShell에서 `./packaging/build-release.ps1 -Version 1.0.0`을 실�
 `release-manifest.json`에는 `Portable.zip`의 파일 크기와 SHA-256이 포함됩니다. 설치 프로그램은 제품 저장소의 HTTPS 배포 파일을 확인한 뒤 설치하며, 다른 CEP 확장은 유지합니다. 업데이트 실패 시 기존 설치를 복구합니다.
 
 설치 프로그램은 Microsoft .NET Framework가 포함된 Windows에서 실행됩니다.
+
+## 명령줄 설치
+
+`Setup.exe --silent`는 창을 띄우지 않고 최신 버전을 다운로드해 같은 전체 설치 과정을 진행합니다. 오프라인 패키지는 `Setup.exe --silent --offline-directory "압축 해제한 폴더"`, 제거는 설치된 `Uninstall.exe --silent --uninstall`을 사용합니다. After Effects는 먼저 닫아야 하며, 강제로 종료하지 않습니다. 종료 코드 0은 성공, 1은 오류입니다. 진행 내용은 stdout, 오류는 stderr로 UTF-8 출력합니다.
+
+PowerShell에서는 설치가 끝날 때까지 기다리고 종료 코드를 확인하세요.
+
+```powershell
+$install = Start-Process -FilePath .\Setup.exe -ArgumentList '--silent' -Wait -PassThru -WindowStyle Hidden -RedirectStandardOutput .\setup.log -RedirectStandardError .\setup-error.log
+$install.ExitCode
+```

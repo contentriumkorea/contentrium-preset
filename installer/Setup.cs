@@ -23,12 +23,12 @@ using Microsoft.Win32;
 [assembly: AssemblyProduct("Contentrium Preset")]
 [assembly: AssemblyCompany("Contentrium")]
 [assembly: AssemblyDescription("Contentrium Preset Windows Installer")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]
 
 namespace ContentriumPreset {
     public sealed class Options {
-        public bool Test, Silent, Uninstall, IgnoreHost, FailPlacement, FailRegistryRestore, HoldUninstall;
+        public bool Test, Silent, SilentTest, Uninstall, IgnoreHost, FailPlacement, FailRegistryRestore, HoldUninstall;
         public int CleanupParent;
         public string Manifest, Package, Target, Offline;
         public static Options Parse(string[] args) {
@@ -36,7 +36,8 @@ namespace ContentriumPreset {
             for (int i = 0; i < args.Length; i++) {
                 string a = args[i];
                 if (a == "--test-mode") o.Test = true;
-                else if (a == "--silent-test") o.Silent = true;
+                else if (a == "--silent") o.Silent = true;
+                else if (a == "--silent-test") { o.Silent = true; o.SilentTest = true; }
                 else if (a == "--uninstall" || a == "/uninstall") o.Uninstall = true;
                 else if (a == "--test-ignore-running-host") o.IgnoreHost = true;
                 else if (a == "--test-fail-after-placement") o.FailPlacement = true;
@@ -53,7 +54,7 @@ namespace ContentriumPreset {
                     if (a == "--offline-directory") o.Offline = Path.GetFullPath(args[i]);
                 } else throw new ArgumentException("알 수 없는 옵션: " + a);
             }
-            if (!o.Test && (o.Silent || o.IgnoreHost || o.FailPlacement || o.FailRegistryRestore || o.HoldUninstall || o.Manifest != null || o.Package != null || o.Target != null))
+            if (!o.Test && (o.SilentTest || o.IgnoreHost || o.FailPlacement || o.FailRegistryRestore || o.HoldUninstall || o.Manifest != null || o.Package != null || o.Target != null))
                 throw new ArgumentException("로컬 파일·대상 지정은 --test-mode에서만 사용할 수 있습니다.");
             if (o.Test && (o.Target == null || (!o.Uninstall && o.CleanupParent == 0 && o.Offline == null && (o.Manifest == null || o.Package == null))))
                 throw new ArgumentException("테스트 설치에는 --manifest, --package, --target이 필요합니다.");
@@ -551,6 +552,10 @@ namespace ContentriumPreset {
         [STAThread]
         static int Main(string[] args) {
             try {
+                if (args.Contains("--silent") || args.Contains("--silent-test")) {
+                    Console.SetOut(new StreamWriter(Console.OpenStandardOutput(), new UTF8Encoding(false)) { AutoFlush = true });
+                    Console.SetError(new StreamWriter(Console.OpenStandardError(), new UTF8Encoding(false)) { AutoFlush = true });
+                }
                 Options options = Options.Parse(args);
                 if (options.CleanupParent > 0) { new Installer(options, delegate { }).CleanupOwned(); return 0; }
                 if (options.Silent) {
@@ -567,7 +572,7 @@ namespace ContentriumPreset {
                 var form = new SetupForm(options); Application.Run(form); return form.Succeeded ? 0 : 2;
             } catch (Exception error) {
                 Console.Error.WriteLine(args.Contains("--test-mode") ? error.ToString() : error.Message);
-                if (!args.Contains("--silent-test") && !args.Contains("--cleanup-owned-install")) MessageBox.Show(error.Message, Installer.Product, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (!args.Contains("--silent") && !args.Contains("--silent-test") && !args.Contains("--cleanup-owned-install")) MessageBox.Show(error.Message, Installer.Product, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return 1;
             }
         }

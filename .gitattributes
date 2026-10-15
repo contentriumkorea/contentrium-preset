@@ -1,0 +1,3 @@
+# Preview profile provenance hashes the exact native source bytes.
+jsx/presets.jsx -text
+jsx/precomp-engine.jsx -text

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "product": "Contentrium Preset",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "entries": [
     {
       "id": "9ce",
@@ -19,7 +19,8 @@
           "id": "9ce",
           "name": "Gaussian Blur & Fade Linear",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/9ce.webm"
         }
       ]
     },
@@ -40,25 +41,29 @@
           "id": "9e4",
           "name": "Bottom",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/9e4.webm"
         },
         {
           "id": "9e6",
           "name": "Left",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/9e6.webm"
         },
         {
           "id": "9e8",
           "name": "Right",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/9e8.webm"
         },
         {
           "id": "9ea",
           "name": "Top",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/9ea.webm"
         }
       ]
     },
@@ -79,25 +84,29 @@
           "id": "b44",
           "name": "Bottom",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b44.webm"
         },
         {
           "id": "b46",
           "name": "Left",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b46.webm"
         },
         {
           "id": "b48",
           "name": "Right",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b48.webm"
         },
         {
           "id": "b4a",
           "name": "Top",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b4a.webm"
         }
       ]
     },
@@ -118,25 +127,29 @@
           "id": "b4c",
           "name": "Bottom",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b4c.webm"
         },
         {
           "id": "b4e",
           "name": "Left",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b4e.webm"
         },
         {
           "id": "b50",
           "name": "Right",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b50.webm"
         },
         {
           "id": "b52",
           "name": "Top",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b52.webm"
         }
       ]
     },
@@ -157,25 +170,29 @@
           "id": "b66",
           "name": "Bottom",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b66.webm"
         },
         {
           "id": "b68",
           "name": "Left",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b68.webm"
         },
         {
           "id": "b6a",
           "name": "Right",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b6a.webm"
         },
         {
           "id": "b6c",
           "name": "Top",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b6c.webm"
         }
       ]
     },
@@ -196,25 +213,29 @@
           "id": "b6e",
           "name": "Bottom",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b6e.webm"
         },
         {
           "id": "b70",
           "name": "Left",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b70.webm"
         },
         {
           "id": "b72",
           "name": "Right",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b72.webm"
         },
         {
           "id": "b74",
           "name": "Top",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b74.webm"
         }
       ]
     },
@@ -235,25 +256,29 @@
           "id": "b76",
           "name": "Bottom",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b76.webm"
         },
         {
           "id": "b78",
           "name": "Left",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b78.webm"
         },
         {
           "id": "b7a",
           "name": "Right",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b7a.webm"
         },
         {
           "id": "b7c",
           "name": "Top",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b7c.webm"
         }
       ]
     },
@@ -274,25 +299,29 @@
           "id": "b7e",
           "name": "Bottom",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b7e.webm"
         },
         {
           "id": "b80",
           "name": "Left",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b80.webm"
         },
         {
           "id": "b82",
           "name": "Right",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b82.webm"
         },
         {
           "id": "b84",
           "name": "Top",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/b84.webm"
         }
       ]
     },
@@ -313,25 +342,29 @@
           "id": "c14",
           "name": "Bottom",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/c14.webm"
         },
         {
           "id": "c16",
           "name": "Left",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/c16.webm"
         },
         {
           "id": "c18",
           "name": "Right",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/c18.webm"
         },
         {
           "id": "c1a",
           "name": "Top",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/c1a.webm"
         }
       ]
     },
@@ -352,25 +385,29 @@
           "id": "c2d",
           "name": "Bottom",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/c2d.webm"
         },
         {
           "id": "c2f",
           "name": "Left",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/c2f.webm"
         },
         {
           "id": "c31",
           "name": "Right",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/c31.webm"
         },
         {
           "id": "c33",
           "name": "Top",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/c33.webm"
         }
       ]
     },
@@ -391,25 +428,29 @@
           "id": "c35",
           "name": "Bottom",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/c35.webm"
         },
         {
           "id": "c37",
           "name": "Left",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/c37.webm"
         },
         {
           "id": "c39",
           "name": "Right",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/c39.webm"
         },
         {
           "id": "c3b",
           "name": "Top",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/c3b.webm"
         }
       ]
     },
@@ -430,25 +471,29 @@
           "id": "c75",
           "name": "Bottom",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/c75.webm"
         },
         {
           "id": "c77",
           "name": "Left",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/c77.webm"
         },
         {
           "id": "c79",
           "name": "Right",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/c79.webm"
         },
         {
           "id": "c7b",
           "name": "Top",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/c7b.webm"
         }
       ]
     },
@@ -470,25 +515,29 @@
           "id": "ddd",
           "name": "Bottom",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/ddd.webm"
         },
         {
           "id": "ddf",
           "name": "Left",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/ddf.webm"
         },
         {
           "id": "de1",
           "name": "Right",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/de1.webm"
         },
         {
           "id": "de3",
           "name": "Top",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/de3.webm"
         }
       ]
     },
@@ -508,7 +557,8 @@
           "id": "17e1",
           "name": "Long Shadow with Gradient",
           "type": 3,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/17e1.webm"
         }
       ]
     },
@@ -529,13 +579,15 @@
           "id": "125",
           "name": "From End",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/125.webm"
         },
         {
           "id": "123",
           "name": "From Start",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/123.webm"
         }
       ]
     },
@@ -556,13 +608,15 @@
           "id": "135",
           "name": "Left",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/135.webm"
         },
         {
           "id": "133",
           "name": "Right",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/133.webm"
         }
       ]
     },
@@ -583,25 +637,29 @@
           "id": "15f",
           "name": "Bottom",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/15f.webm"
         },
         {
           "id": "161",
           "name": "Bottom From End",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/161.webm"
         },
         {
           "id": "165",
           "name": "Top",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/165.webm"
         },
         {
           "id": "163",
           "name": "Top From End",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/163.webm"
         }
       ]
     },
@@ -622,13 +680,15 @@
           "id": "18c",
           "name": "Bottom",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/18c.webm"
         },
         {
           "id": "18e",
           "name": "Top",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/18e.webm"
         }
       ]
     },
@@ -649,7 +709,8 @@
           "id": "1b8",
           "name": "Ease 3D Fade & Position & Rotate Randomly",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/1b8.webm"
         }
       ]
     },
@@ -670,13 +731,15 @@
           "id": "1c6",
           "name": "From End",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/1c6.webm"
         },
         {
           "id": "1c4",
           "name": "From Start",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/1c4.webm"
         }
       ]
     },
@@ -697,19 +760,22 @@
           "id": "1d4",
           "name": "Bottom",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/1d4.webm"
         },
         {
           "id": "1d6",
           "name": "Center",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/1d6.webm"
         },
         {
           "id": "1d8",
           "name": "Top",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/1d8.webm"
         }
       ]
     },
@@ -730,13 +796,15 @@
           "id": "226",
           "name": "Left",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/226.webm"
         },
         {
           "id": "224",
           "name": "Right",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/224.webm"
         }
       ]
     },
@@ -757,19 +825,22 @@
           "id": "3f4",
           "name": "Bottom",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/3f4.webm"
         },
         {
           "id": "3f6",
           "name": "Center",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/3f6.webm"
         },
         {
           "id": "3f8",
           "name": "Top",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/3f8.webm"
         }
       ]
     },
@@ -789,7 +860,8 @@
           "id": "476",
           "name": "Typewrite Fill Color",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/476.webm"
         }
       ]
     },
@@ -809,7 +881,8 @@
           "id": "478",
           "name": "Typewrite Stroke Color",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/478.webm"
         }
       ]
     },
@@ -829,7 +902,8 @@
           "id": "702",
           "name": "Ease Position 3D Down",
           "type": 1,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/702.webm"
         }
       ]
     },
@@ -849,7 +923,8 @@
           "id": "91a",
           "name": "Color Characters Fill Randomly",
           "type": 3,
-          "available": true
+          "available": true,
+          "renderedPreview": "library/previews/91a.webm"
         }
       ]
     },
@@ -874,7 +949,8 @@
             "kind": "title",
             "lines": 1,
             "direction": "down"
-          }
+          },
+          "renderedPreview": "library/previews/31ce.webm"
         },
         {
           "id": "31da",
@@ -885,7 +961,8 @@
             "kind": "title",
             "lines": 1,
             "direction": "left"
-          }
+          },
+          "renderedPreview": "library/previews/31da.webm"
         },
         {
           "id": "31d6",
@@ -896,7 +973,8 @@
             "kind": "title",
             "lines": 1,
             "direction": "right"
-          }
+          },
+          "renderedPreview": "library/previews/31d6.webm"
         },
         {
           "id": "31d4",
@@ -907,7 +985,8 @@
             "kind": "title",
             "lines": 1,
             "direction": "up"
-          }
+          },
+          "renderedPreview": "library/previews/31d4.webm"
         }
       ]
     },
@@ -932,7 +1011,8 @@
             "kind": "title",
             "lines": 2,
             "direction": "up"
-          }
+          },
+          "renderedPreview": "library/previews/31e1.webm"
         }
       ]
     },
@@ -957,7 +1037,8 @@
             "kind": "title",
             "lines": 3,
             "direction": "up"
-          }
+          },
+          "renderedPreview": "library/previews/31a1.webm"
         }
       ]
     },
@@ -979,7 +1060,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/236d.webm"
         }
       ]
     },
@@ -1001,7 +1083,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/24ee.webm"
         },
         {
           "id": "24d0",
@@ -1010,7 +1093,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/24d0.webm"
         },
         {
           "id": "24e2",
@@ -1019,7 +1103,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/24e2.webm"
         },
         {
           "id": "24c2",
@@ -1028,7 +1113,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/24c2.webm"
         }
       ]
     },
@@ -1050,7 +1136,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/24e4.webm"
         },
         {
           "id": "24d8",
@@ -1059,7 +1146,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/24d8.webm"
         },
         {
           "id": "24bc",
@@ -1068,7 +1156,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/24bc.webm"
         },
         {
           "id": "24dc",
@@ -1077,7 +1166,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/24dc.webm"
         }
       ]
     },
@@ -1099,7 +1189,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/23d0.webm"
         },
         {
           "id": "2390",
@@ -1108,7 +1199,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/2390.webm"
         },
         {
           "id": "238e",
@@ -1117,7 +1209,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/238e.webm"
         },
         {
           "id": "23b4",
@@ -1126,7 +1219,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/23b4.webm"
         }
       ]
     },
@@ -1148,7 +1242,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/2494.webm"
         },
         {
           "id": "24a7",
@@ -1157,7 +1252,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/24a7.webm"
         },
         {
           "id": "249a",
@@ -1166,7 +1262,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/249a.webm"
         },
         {
           "id": "2498",
@@ -1175,7 +1272,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/2498.webm"
         }
       ]
     },
@@ -1197,7 +1295,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/250d.webm"
         }
       ]
     },
@@ -1219,7 +1318,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/251d.webm"
         }
       ]
     },
@@ -1241,7 +1341,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/2529.webm"
         }
       ]
     },
@@ -1263,7 +1364,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/252a.webm"
         }
       ]
     },
@@ -1285,7 +1387,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/250f.webm"
         }
       ]
     },
@@ -1307,7 +1410,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/2469.webm"
         },
         {
           "id": "2453",
@@ -1316,7 +1420,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/2453.webm"
         }
       ]
     },
@@ -1338,7 +1443,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/246d.webm"
         },
         {
           "id": "2455",
@@ -1347,7 +1453,8 @@
           "available": true,
           "generator": {
             "kind": "camera"
-          }
+          },
+          "renderedPreview": "library/previews/2455.webm"
         }
       ]
     },
@@ -1371,7 +1478,8 @@
           "generator": {
             "kind": "shape",
             "direction": "left"
-          }
+          },
+          "renderedPreview": "library/previews/1d61.webm"
         },
         {
           "id": "1d6d",
@@ -1381,7 +1489,8 @@
           "generator": {
             "kind": "shape",
             "direction": "left"
-          }
+          },
+          "renderedPreview": "library/previews/1d6d.webm"
         },
         {
           "id": "1d53",
@@ -1391,7 +1500,8 @@
           "generator": {
             "kind": "shape",
             "direction": "left"
-          }
+          },
+          "renderedPreview": "library/previews/1d53.webm"
         }
       ]
     }

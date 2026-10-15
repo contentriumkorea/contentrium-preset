@@ -2,7 +2,7 @@
 param(
     [string]$PayloadRoot,
     [string]$Output,
-    [ValidatePattern('^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$')][string]$Version = '1.0.0'
+    [ValidatePattern('^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$')][string]$Version = '1.1.0'
 )
 $ErrorActionPreference = 'Stop'
 if (-not $PayloadRoot) { $PayloadRoot = Split-Path -Parent $PSScriptRoot }
@@ -15,6 +15,10 @@ if (-not (Test-Path -LiteralPath $manifest)) { throw "Public CEP payload is not 
 [xml]$xml = Get-Content -LiteralPath $manifest -Raw
 if ($xml.ExtensionManifest.ExtensionBundleId -ne 'com.contentrium.preset') { throw 'Public extension ID must be com.contentrium.preset.' }
 if ($xml.ExtensionManifest.ExtensionBundleVersion -ne $Version -or $xml.ExtensionManifest.ExtensionList.Extension.Version -ne $Version) { throw 'CEP manifest and release version must match.' }
+$packageMetadata = Get-Content -LiteralPath (Join-Path $payload 'package.json') -Raw | ConvertFrom-Json
+$catalogMetadata = Get-Content -LiteralPath (Join-Path $payload 'library\catalog.json') -Raw | ConvertFrom-Json
+if ($packageMetadata.name -ne 'contentrium-preset' -or $packageMetadata.version -ne $Version) { throw 'package.json product and release version must match.' }
+if ($catalogMetadata.product -ne 'Contentrium Preset' -or $catalogMetadata.version -ne $Version) { throw 'Catalog product and release version must match.' }
 & (Join-Path $project 'installer\build.ps1') -Output (Join-Path $outputPath 'Setup.exe')
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $stage = Join-Path ([IO.Path]::GetTempPath()) ('ContentriumPreset-Package-' + [guid]::NewGuid().ToString('N'))
