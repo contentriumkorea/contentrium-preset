@@ -1,0 +1,1399 @@
+{
+  "schemaVersion": 1,
+  "product": "Contentrium Preset",
+  "version": "1.0.0",
+  "entries": [
+    {
+      "id": "9ce",
+      "name": "Gaussian Blur & Fade Linear",
+      "category": [
+        "Animation Presets",
+        "Motion Presets",
+        "2D Transitions",
+        "Blur & Fade"
+      ],
+      "defaultId": "9ce",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "9ce",
+          "name": "Gaussian Blur & Fade Linear",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "9e5",
+      "name": "Ease Fade & Position 2",
+      "category": [
+        "Animation Presets",
+        "Motion Presets",
+        "2D Transitions",
+        "Fade & Position",
+        "Ease"
+      ],
+      "defaultId": "9e4",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "9e4",
+          "name": "Bottom",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "9e6",
+          "name": "Left",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "9e8",
+          "name": "Right",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "9ea",
+          "name": "Top",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "b45",
+      "name": "Overshoot Position 1",
+      "category": [
+        "Animation Presets",
+        "Motion Presets",
+        "2D Transitions",
+        "Position",
+        "Overshoot"
+      ],
+      "defaultId": "b44",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "b44",
+          "name": "Bottom",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "b46",
+          "name": "Left",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "b48",
+          "name": "Right",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "b4a",
+          "name": "Top",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "b4d",
+      "name": "Overshoot Position 2",
+      "category": [
+        "Animation Presets",
+        "Motion Presets",
+        "2D Transitions",
+        "Position",
+        "Overshoot"
+      ],
+      "defaultId": "b4c",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "b4c",
+          "name": "Bottom",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "b4e",
+          "name": "Left",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "b50",
+          "name": "Right",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "b52",
+          "name": "Top",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "b67",
+      "name": "Bounce Position 1",
+      "category": [
+        "Animation Presets",
+        "Motion Presets",
+        "2D Transitions",
+        "Position",
+        "Bounce"
+      ],
+      "defaultId": "b66",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "b66",
+          "name": "Bottom",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "b68",
+          "name": "Left",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "b6a",
+          "name": "Right",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "b6c",
+          "name": "Top",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "b6f",
+      "name": "Bounce Position 2",
+      "category": [
+        "Animation Presets",
+        "Motion Presets",
+        "2D Transitions",
+        "Position",
+        "Bounce"
+      ],
+      "defaultId": "b6e",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "b6e",
+          "name": "Bottom",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "b70",
+          "name": "Left",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "b72",
+          "name": "Right",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "b74",
+          "name": "Top",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "b77",
+      "name": "Bounce Position 3",
+      "category": [
+        "Animation Presets",
+        "Motion Presets",
+        "2D Transitions",
+        "Position",
+        "Bounce"
+      ],
+      "defaultId": "b76",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "b76",
+          "name": "Bottom",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "b78",
+          "name": "Left",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "b7a",
+          "name": "Right",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "b7c",
+          "name": "Top",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "b7f",
+      "name": "Bounce Position 4",
+      "category": [
+        "Animation Presets",
+        "Motion Presets",
+        "2D Transitions",
+        "Position",
+        "Bounce"
+      ],
+      "defaultId": "b7e",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "b7e",
+          "name": "Bottom",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "b80",
+          "name": "Left",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "b82",
+          "name": "Right",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "b84",
+          "name": "Top",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "name": "Ease Position & Rotate & Scale 5",
+      "category": [
+        "Animation Presets",
+        "Motion Presets",
+        "2D Transitions",
+        "Position & Rotate & Scale",
+        "Ease"
+      ],
+      "defaultId": "c14",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "c14",
+          "name": "Bottom",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "c16",
+          "name": "Left",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "c18",
+          "name": "Right",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "c1a",
+          "name": "Top",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "c2e",
+      "name": "Overshoot Position & Rotate & Scale 1",
+      "category": [
+        "Animation Presets",
+        "Motion Presets",
+        "2D Transitions",
+        "Position & Rotate & Scale",
+        "Overshoot"
+      ],
+      "defaultId": "c2d",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "c2d",
+          "name": "Bottom",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "c2f",
+          "name": "Left",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "c31",
+          "name": "Right",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "c33",
+          "name": "Top",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "c36",
+      "name": "Overshoot Position & Rotate & Scale 2",
+      "category": [
+        "Animation Presets",
+        "Motion Presets",
+        "2D Transitions",
+        "Position & Rotate & Scale",
+        "Overshoot"
+      ],
+      "defaultId": "c35",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "c35",
+          "name": "Bottom",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "c37",
+          "name": "Left",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "c39",
+          "name": "Right",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "c3b",
+          "name": "Top",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "c76",
+      "name": "Overshoot Position & Rotate & Scale Together 3",
+      "category": [
+        "Animation Presets",
+        "Motion Presets",
+        "2D Transitions",
+        "Position & Rotate & Scale",
+        "Overshoot"
+      ],
+      "defaultId": "c75",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "c75",
+          "name": "Bottom",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "c77",
+          "name": "Left",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "c79",
+          "name": "Right",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "c7b",
+          "name": "Top",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "dde",
+      "name": "Ease In 2 Scale Edge Disproportionately - Cubic",
+      "category": [
+        "Animation Presets",
+        "Motion Presets",
+        "2D Transitions",
+        "Scale",
+        "From Edge Disproportionately",
+        "Ease"
+      ],
+      "defaultId": "ddd",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "ddd",
+          "name": "Bottom",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "ddf",
+          "name": "Left",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "de1",
+          "name": "Right",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "de3",
+          "name": "Top",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "17e1",
+      "name": "Long Shadow with Gradient",
+      "category": [
+        "Animation Presets",
+        "Motion Presets",
+        "Effects",
+        "Long Shadow & Extrude"
+      ],
+      "defaultId": "17e1",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "17e1",
+          "name": "Long Shadow with Gradient",
+          "type": 3,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "124",
+      "name": "Ease Fade Together 3",
+      "category": [
+        "Animation Presets",
+        "Text Presets",
+        "Transitions - Characters",
+        "Fade",
+        "Ease"
+      ],
+      "defaultId": "123",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "125",
+          "name": "From End",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "123",
+          "name": "From Start",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "134",
+      "name": "Ease Fade & Position X 1",
+      "category": [
+        "Animation Presets",
+        "Text Presets",
+        "Transitions - Characters",
+        "Fade & Position",
+        "Ease"
+      ],
+      "defaultId": "133",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "135",
+          "name": "Left",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "133",
+          "name": "Right",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "160",
+      "name": "Ease Fade & Position Y 5",
+      "category": [
+        "Animation Presets",
+        "Text Presets",
+        "Transitions - Characters",
+        "Fade & Position",
+        "Ease"
+      ],
+      "defaultId": "15f",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "15f",
+          "name": "Bottom",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "161",
+          "name": "Bottom From End",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "165",
+          "name": "Top",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "163",
+          "name": "Top From End",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "18d",
+      "name": "Overshoot Fade & Position 2",
+      "category": [
+        "Animation Presets",
+        "Text Presets",
+        "Transitions - Characters",
+        "Fade & Position",
+        "Overshoot"
+      ],
+      "defaultId": "18c",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "18c",
+          "name": "Bottom",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "18e",
+          "name": "Top",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "1b8",
+      "name": "Ease 3D Fade & Position & Rotate Randomly",
+      "category": [
+        "Animation Presets",
+        "Text Presets",
+        "Transitions - Characters",
+        "Fade & Position & Rotate",
+        "Ease"
+      ],
+      "defaultId": "1b8",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "1b8",
+          "name": "Ease 3D Fade & Position & Rotate Randomly",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "1c5",
+      "name": "Ease Fade & Scale & Tracking 2",
+      "category": [
+        "Animation Presets",
+        "Text Presets",
+        "Transitions - Characters",
+        "Fade & Scale & Tracking",
+        "Ease"
+      ],
+      "defaultId": "1c4",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "1c6",
+          "name": "From End",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "1c4",
+          "name": "From Start",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "1d5",
+      "name": "Overshoot Fade & Scale & Tracking 1",
+      "category": [
+        "Animation Presets",
+        "Text Presets",
+        "Transitions - Characters",
+        "Fade & Scale & Tracking",
+        "Overshoot"
+      ],
+      "defaultId": "1d4",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "1d4",
+          "name": "Bottom",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "1d6",
+          "name": "Center",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "1d8",
+          "name": "Top",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "225",
+      "name": "Ease Position X",
+      "category": [
+        "Animation Presets",
+        "Text Presets",
+        "Transitions - Characters",
+        "Position",
+        "Ease"
+      ],
+      "defaultId": "224",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "226",
+          "name": "Left",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "224",
+          "name": "Right",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "3f5",
+      "name": "Overshoot Scale 2",
+      "category": [
+        "Animation Presets",
+        "Text Presets",
+        "Transitions - Characters",
+        "Scale",
+        "Overshoot"
+      ],
+      "defaultId": "3f4",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "3f4",
+          "name": "Bottom",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "3f6",
+          "name": "Center",
+          "type": 1,
+          "available": true
+        },
+        {
+          "id": "3f8",
+          "name": "Top",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "476",
+      "name": "Typewrite Fill Color",
+      "category": [
+        "Animation Presets",
+        "Text Presets",
+        "Transitions - Characters",
+        "Typewrite"
+      ],
+      "defaultId": "476",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "476",
+          "name": "Typewrite Fill Color",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "478",
+      "name": "Typewrite Stroke Color",
+      "category": [
+        "Animation Presets",
+        "Text Presets",
+        "Transitions - Characters",
+        "Typewrite"
+      ],
+      "defaultId": "478",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "478",
+          "name": "Typewrite Stroke Color",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "702",
+      "name": "Ease Position 3D Down",
+      "category": [
+        "Animation Presets",
+        "Text Presets",
+        "Transitions - Words",
+        "Position 3D"
+      ],
+      "defaultId": "702",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "702",
+          "name": "Ease Position 3D Down",
+          "type": 1,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "91a",
+      "name": "Color Characters Fill Randomly",
+      "category": [
+        "Animation Presets",
+        "Text Presets",
+        "Effects",
+        "Color"
+      ],
+      "defaultId": "91a",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "91a",
+          "name": "Color Characters Fill Randomly",
+          "type": 3,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "31cf",
+      "name": "1-Line Basic Title 1",
+      "category": [
+        "Titles & Typography",
+        "Essential Typography",
+        "Text",
+        "1-Line Title"
+      ],
+      "defaultId": "31d4",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "31ce",
+          "name": "Down",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "title",
+            "lines": 1,
+            "direction": "down"
+          }
+        },
+        {
+          "id": "31da",
+          "name": "Left",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "title",
+            "lines": 1,
+            "direction": "left"
+          }
+        },
+        {
+          "id": "31d6",
+          "name": "Right",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "title",
+            "lines": 1,
+            "direction": "right"
+          }
+        },
+        {
+          "id": "31d4",
+          "name": "Up",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "title",
+            "lines": 1,
+            "direction": "up"
+          }
+        }
+      ]
+    },
+    {
+      "id": "31e1",
+      "name": "2-Line Basic Title 2",
+      "category": [
+        "Titles & Typography",
+        "Essential Typography",
+        "Text",
+        "2-Line Title"
+      ],
+      "defaultId": "31e1",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "31e1",
+          "name": "2-Line Basic Title 2",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "title",
+            "lines": 2,
+            "direction": "up"
+          }
+        }
+      ]
+    },
+    {
+      "id": "31a1",
+      "name": "3-Line Basic Title 2 - Center",
+      "category": [
+        "Titles & Typography",
+        "Essential Typography",
+        "Text",
+        "3-Line Title"
+      ],
+      "defaultId": "31a1",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "31a1",
+          "name": "3-Line Basic Title 2 - Center",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "title",
+            "lines": 3,
+            "direction": "up"
+          }
+        }
+      ]
+    },
+    {
+      "id": "236d",
+      "name": "Flash Blur 2",
+      "category": [
+        "Transitions",
+        "Camera",
+        "Blurs & Fades"
+      ],
+      "defaultId": "236d",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "236d",
+          "name": "Flash Blur 2",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        }
+      ]
+    },
+    {
+      "id": "24c3",
+      "name": "Pan Medium & Shake",
+      "category": [
+        "Transitions",
+        "Camera",
+        "Pan"
+      ],
+      "defaultId": "24d0",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "24ee",
+          "name": "Bottom",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        },
+        {
+          "id": "24d0",
+          "name": "Left",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        },
+        {
+          "id": "24e2",
+          "name": "Right",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        },
+        {
+          "id": "24c2",
+          "name": "Top",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        }
+      ]
+    },
+    {
+      "id": "24bd",
+      "name": "Pan & Tilt Long",
+      "category": [
+        "Transitions",
+        "Camera",
+        "Pan"
+      ],
+      "defaultId": "24e4",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "24e4",
+          "name": "Bottom",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        },
+        {
+          "id": "24d8",
+          "name": "Left",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        },
+        {
+          "id": "24bc",
+          "name": "Right",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        },
+        {
+          "id": "24dc",
+          "name": "Top",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        }
+      ]
+    },
+    {
+      "id": "238f",
+      "name": "Pan & Rotate & Tilt 1",
+      "category": [
+        "Transitions",
+        "Camera",
+        "Pan & Rotate"
+      ],
+      "defaultId": "2390",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "23d0",
+          "name": "Left-Bottom",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        },
+        {
+          "id": "2390",
+          "name": "Left-Top",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        },
+        {
+          "id": "238e",
+          "name": "Right-Bottom",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        },
+        {
+          "id": "23b4",
+          "name": "Right-Top",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        }
+      ]
+    },
+    {
+      "id": "2495",
+      "name": "Rotate 360 & Tilt 1",
+      "category": [
+        "Transitions",
+        "Camera",
+        "Rotate"
+      ],
+      "defaultId": "2494",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "2494",
+          "name": "Bottom-Left",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        },
+        {
+          "id": "24a7",
+          "name": "Bottom-Right",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        },
+        {
+          "id": "249a",
+          "name": "Top-Left",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        },
+        {
+          "id": "2498",
+          "name": "Top-Right",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        }
+      ]
+    },
+    {
+      "id": "250d",
+      "name": "Simple Zoom In",
+      "category": [
+        "Transitions",
+        "Camera",
+        "Zoom"
+      ],
+      "defaultId": "250d",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "250d",
+          "name": "Simple Zoom In",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        }
+      ]
+    },
+    {
+      "id": "251d",
+      "name": "Simple Zoom Out",
+      "category": [
+        "Transitions",
+        "Camera",
+        "Zoom"
+      ],
+      "defaultId": "251d",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "251d",
+          "name": "Simple Zoom Out",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        }
+      ]
+    },
+    {
+      "id": "2529",
+      "name": "Simple Distorted Zoom Out",
+      "category": [
+        "Transitions",
+        "Camera",
+        "Zoom"
+      ],
+      "defaultId": "2529",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "2529",
+          "name": "Simple Distorted Zoom Out",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        }
+      ]
+    },
+    {
+      "id": "252a",
+      "name": "Hyper Zoom In",
+      "category": [
+        "Transitions",
+        "Camera",
+        "Zoom"
+      ],
+      "defaultId": "252a",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "252a",
+          "name": "Hyper Zoom In",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        }
+      ]
+    },
+    {
+      "id": "250f",
+      "name": "Hyper Zoom Out",
+      "category": [
+        "Transitions",
+        "Camera",
+        "Zoom"
+      ],
+      "defaultId": "250f",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "250f",
+          "name": "Hyper Zoom Out",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        }
+      ]
+    },
+    {
+      "id": "2454",
+      "name": "Zoom & Twirl & Chroma Split & Shake",
+      "category": [
+        "Transitions",
+        "Camera",
+        "Zoom & Twirl"
+      ],
+      "defaultId": "2453",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "2469",
+          "name": "Left",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        },
+        {
+          "id": "2453",
+          "name": "Right",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        }
+      ]
+    },
+    {
+      "id": "2456",
+      "name": "Power Zoom & Twirl & Shake Out",
+      "category": [
+        "Transitions",
+        "Camera",
+        "Zoom & Twirl"
+      ],
+      "defaultId": "246d",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "246d",
+          "name": "Left",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        },
+        {
+          "id": "2455",
+          "name": "Right",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "camera"
+          }
+        }
+      ]
+    },
+    {
+      "id": "1d54",
+      "name": "Rectangle Fill 6",
+      "category": [
+        "Graphic Components",
+        "Shape Elements",
+        "Customizable Duration",
+        "Rectangles"
+      ],
+      "defaultId": "1d61",
+      "favorite": true,
+      "variants": [
+        {
+          "id": "1d61",
+          "name": "Scale From Left 1",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "shape",
+            "direction": "left"
+          }
+        },
+        {
+          "id": "1d6d",
+          "name": "Scale From Left 2",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "shape",
+            "direction": "left"
+          }
+        },
+        {
+          "id": "1d53",
+          "name": "Scale From Left 3",
+          "type": 10,
+          "available": true,
+          "generator": {
+            "kind": "shape",
+            "direction": "left"
+          }
+        }
+      ]
+    }
+  ]
+}

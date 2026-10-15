@@ -1,0 +1,36 @@
+# Generated release and installer output
+/installer/out/
+/packaging/out/
+/dist/
+/releases/
+*.exe
+*.zip
+*.pdb
+*.log
+*.tmp
+*.backup-*
+*.staging-*
+
+# Local QA artifacts and absolute-path receipts
+/runtime-tests/
+/test-output/
+/qa-output/
+**/install-receipt.json
+**/.contentrium-install.json
+/installer/test-results*.json
+/packaging/test-results*.json
+/package-info.json
+/release-manifest.json
+
+# Local tooling and credentials
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+.env
+.env.*
+!.env.example
+credentials*.json
+tokens*.json
+secrets*.json

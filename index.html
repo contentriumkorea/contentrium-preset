@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Contentrium Preset</title><link rel="icon" href="assets/icon.svg" type="image/svg+xml"><link rel="stylesheet" href="panel.css"></head>
+<body>
+  <header class="topbar"><div class="brand" title="Contentrium Preset">Contentrium <span>Preset</span></div><button id="browse-tab" class="tab active" aria-selected="true">Browse</button><button id="edit-tab" class="tab" aria-selected="false">Edit</button><div class="topbar-right"><span id="connection" class="connection">Browser</span><button id="refresh" class="icon-button" title="선택 레이어와 목록 새로고침" aria-label="새로고침">↻</button></div></header>
+  <main id="browse-view" class="browse-view">
+    <aside id="tree-panel" class="tree-panel"><div class="search-bar"><button id="favorites-toggle" class="icon-button favorite-filter" title="즐겨찾기만 보기" aria-label="즐겨찾기만 보기" aria-pressed="false">★</button><input id="search" type="search" placeholder="Search items" aria-label="항목 검색"><button id="clear-search" class="icon-button" title="검색 지우기" aria-label="검색 지우기">×</button></div><div id="category-tree" class="category-tree" role="tree" aria-label="분류"></div><div class="tree-footer"><span id="library-count"></span><label class="size-label" title="썸네일 크기"><span>−</span><input id="thumbnail-size" type="range" min="150" max="320" step="10" value="190" aria-label="썸네일 크기"><span>＋</span></label></div></aside>
+    <div id="resizer" class="resizer" role="separator" aria-orientation="vertical" title="분류 영역 너비 조절"></div>
+    <section class="grid-panel"><div id="breadcrumbs" class="breadcrumbs">All items</div><div id="preset-grid" class="preset-grid" role="list" aria-label="프리셋"></div><footer class="apply-footer"><div id="selection-label" class="selection-label">프리셋을 선택하세요.</div><div id="variant-summary" class="variant-summary"></div><div id="apply-actions" class="apply-actions"></div></footer></section>
+  </main>
+  <main id="edit-view" class="edit-view hidden"><div class="editor-selection"><span id="selected-layer">레이어 선택 상태를 확인하려면 AE에서 패널을 열어주세요.</span><button id="capture" class="small-button hidden" disabled title="사용자 프리셋 저장">Save Preset</button></div><div id="applied-presets" class="applied-presets"></div><div id="editor-controls" class="editor-controls"></div></main>
+  <div id="status" class="status-bar" role="status" aria-live="polite">프리셋 목록을 읽는 중…</div>
+  <dialog id="capture-dialog"><form id="capture-form"><h2>선택 레이어 프리셋 저장</h2><label for="capture-name">이름</label><input id="capture-name" required maxlength="120" autocomplete="off"><div class="dialog-actions"><button id="capture-cancel" type="button">Cancel</button><button type="submit">Save</button></div></form></dialog>
+  <script src="preview.js"></script><script src="panel.js"></script>
+</body></html>
