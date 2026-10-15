@@ -21,3 +21,7 @@ After Effects용 프리셋 패널입니다. 43개 프리셋과 110개 변형을 
 포터블·오프라인 패키지도 After Effects 호스트 등록이 필요한 CEP 패널입니다. 독립 실행형 편집 앱은 아닙니다. 검증 환경은 Windows 11, After Effects 2026(26.5)입니다. 미리보기는 선택 레이어의 실시간 렌더 기능이 아닙니다.
 
 [사용 안내](https://github.com/contentriumkorea/contentrium-preset/blob/main/docs/user-guide.md) · [검증 기록과 지원 범위](https://github.com/contentriumkorea/contentrium-preset/blob/main/docs/verification.md)
+
+## 배포 확인
+
+Setup.exe는 45,568바이트, 전체 Portable.zip은 13,570,161바이트입니다. 110개 AE 미리보기 렌더와 브라우저 재생, 코드 검사 74개, 설치 파일 검사 16+7개와 메타데이터 검사 4개를 통과했습니다. 실제 사용자 경로의 오프라인 설치 및 공개 최신 링크를 사용하는 온라인 설치를 확인했고, 두 설치 모두 런타임 127개 파일의 해시가 일치했습니다. 설치된 엔진의 대표 5종 적용·컨트롤 변경/복구·제거 등 38개 항목도 통과했습니다. 온라인 설치는 `--silent` 경로로 검증했습니다.

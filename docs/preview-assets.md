@@ -2,6 +2,8 @@
 
 Generated with the built-in image generation tool. These three original project assets provide the animation preview subjects. Object animations use one isolated PNG emblem; text and titles use no scene image; camera transitions use the two contrasting scenes.
 
+Files: [transparent logo PNG](../assets/preview-logo.png) (1254×1254 RGBA), [cool scene A](../assets/preview-before.png) and [warm scene B](../assets/preview-after.png) (1672×941 PNG each).
+
 ## logo
 
 Use case: logo-brand. Create a polished PNG animation-preview logo for Contentrium Preset. Use the attached Contentrium geometric C/R mark as the shape reference: preserve its recognizable angular cut-out C and diagonal lower-right folded arm, but give it a very restrained premium beveled 3D finish, pearly white C and luminous lavender-to-electric-purple arm. One compact isolated emblem centered, straight-on view, square composition, 18% empty padding, bold clean silhouette legible at 80 pixels. Real fully transparent background and transparent internal negative spaces, no black rectangle, no floor, no cast shadow, no extra symbols or words, no text, no watermark. Preserve crisp edges and solid opaque emblem surfaces so position/rotation/blur/long-shadow animation can be read clearly. Output actual transparent PNG, not checkerboard artwork.
