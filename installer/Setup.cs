@@ -23,8 +23,8 @@ using Microsoft.Win32;
 [assembly: AssemblyProduct("Contentrium Preset")]
 [assembly: AssemblyCompany("Contentrium")]
 [assembly: AssemblyDescription("Contentrium Preset Windows Installer")]
-[assembly: AssemblyVersion("1.1.1.0")]
-[assembly: AssemblyFileVersion("1.1.1.0")]
+[assembly: AssemblyVersion("1.2.0.0")]
+[assembly: AssemblyFileVersion("1.2.0.0")]
 
 namespace ContentriumPreset {
     public sealed class Options {
@@ -230,21 +230,55 @@ namespace ContentriumPreset {
                 }
             }
         }
-        static void ValidatePayload(string payload, string expectedVersion = null) {
+        // BEGIN PAYLOAD CONTRACT
+        // Build validation reads these literal contracts; tests compare the file list to verify-package.cjs.
+        const string RequiredPayloadPaths = "ui-thumbnail-worker.js|thumbnail-worker/backend.cjs|thumbnail-worker/worker-contract.cjs|thumbnail-worker/prepare.cjs|thumbnail-worker/cancel.cjs|thumbnail-worker/host-binding.ps1|thumbnail-worker/launch.ps1|thumbnail-worker/validate-result.ps1|thumbnail-worker/worker-gate.ps1|thumbnail-worker/jsx/thumbnail-worker.template.jsx|index.html|panel.css|panel.js|ui-core.js|ui-animated-font.js|ui-property-sets.js|ui-editor.js|ui-media.js|ui-sync.js|ui-workspace.js|ui-library.js|ui-thumbnails.js|ui-file-lease.js|ui-theme.js|ui-audio.js|ui-audio-export.js|preview.js|preview-audio-source.js|preview-audio-preparer.js|CSXS/manifest.xml|jsx/engine.jsx|jsx/json-engine.jsx|jsx/presets.jsx|jsx/timeline-engine.jsx|jsx/animated-font-model.jsx|jsx/animated-font-engine.jsx|jsx/font-pack-engine.jsx|library/fonts/index.json|library/fonts/contentrium-grid.cfont.json|library/fonts/LICENSE.txt|library/fonts/contentrium-grid.webm|jsx/overlay-engine.jsx|jsx/audio-engine.jsx|jsx/precomp-engine.jsx|jsx/texture-engine.jsx|jsx/tools-engine.jsx|jsx/sequence-engine.jsx|jsx/workspace-engine.jsx|jsx/user-preset-engine.jsx|jsx/property-set-engine.jsx|jsx/color-engine.jsx|jsx/palette-engine.jsx|jsx/thumbnail-engine.jsx|library/catalog.json|library/preview-profiles.json|library/preview-media.json|assets/icon.svg|assets/preview-before.png|assets/preview-after.png|assets/preview-logo.png";
+        const string RequiredPanelViews = "browse|edit|alt2|alt3|alt4|easing|keyframes|anchor|shifter";
+        static void ValidatePayload(string payload, string expectedVersion = null, bool requireCurrentContract = true) {
             string manifest = Path.Combine(payload, @"CSXS\manifest.xml");
             var settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null };
             using (var reader = XmlReader.Create(manifest, settings)) {
                 var xml = XDocument.Load(reader);
-                if (xml.Root == null || (string)xml.Root.Attribute("ExtensionBundleId") != Id ||
+                if (xml.Root == null || xml.Root.Name != "ExtensionManifest" || (string)xml.Root.Attribute("ExtensionBundleId") != Id ||
                     !xml.Descendants("Extension").Any(e => (string)e.Attribute("Id") == Id))
                     throw new InvalidDataException("CEP 제품 식별자가 올바르지 않습니다.");
                 string version = (string)xml.Root.Attribute("ExtensionBundleVersion");
                 if (String.IsNullOrEmpty(version) || (expectedVersion != null && version != expectedVersion) ||
                     !xml.Descendants("ExtensionList").Elements("Extension").Any(e => (string)e.Attribute("Id") == Id && (string)e.Attribute("Version") == version))
                     throw new InvalidDataException("CEP 패널과 패키지 버전이 일치하지 않습니다.");
+                if (requireCurrentContract) {
+                    string[] views = RequiredPanelViews.Split('|');
+                    var list = xml.Root.Element("ExtensionList");
+                    var dispatches = xml.Root.Element("DispatchInfoList");
+                    if (list == null || dispatches == null || xml.Root.Elements("ExtensionList").Count() != 1 || xml.Root.Elements("DispatchInfoList").Count() != 1 || list.Elements("Extension").Count() != views.Length || dispatches.Elements("Extension").Count() != views.Length)
+                        throw new InvalidDataException("CEP panel list must contain the exact nine panels.");
+                    foreach (string view in views) {
+                        string panelId = view == "browse" ? Id : Id + "." + view;
+                        var entries = list.Elements("Extension").Where(e => (string)e.Attribute("Id") == panelId).ToArray();
+                        var routes = dispatches.Elements("Extension").Where(e => (string)e.Attribute("Id") == panelId).ToArray();
+                        if (entries.Length != 1 || (string)entries[0].Attribute("Version") != version || routes.Length != 1)
+                            throw new InvalidDataException("CEP panel version or identity mismatch: " + panelId);
+                        var dispatch = routes[0].Element("DispatchInfo");
+                        var resources = dispatch == null ? null : dispatch.Element("Resources");
+                        string main = view == "browse" ? "./index.html" : "./index.html?view=" + view;
+                        if (resources == null || routes[0].Elements("DispatchInfo").Count() != 1 || dispatch.Elements("Resources").Count() != 1 || resources.Elements("MainPath").Count() != 1 || resources.Elements("ScriptPath").Count() != 1 ||
+                            (string)resources.Element("MainPath") != main || (string)resources.Element("ScriptPath") != "./jsx/engine.jsx")
+                            throw new InvalidDataException("CEP panel dispatch mismatch: " + panelId);
+                    }
+                }
+                if (requireCurrentContract) {
+                    foreach (string relative in RequiredPayloadPaths.Split('|'))
+                        if (!File.Exists(Path.Combine(payload, relative.Replace('/', Path.DirectorySeparatorChar))))
+                            throw new InvalidDataException("Required public file missing: " + relative);
+                    var catalog = new JavaScriptSerializer().Deserialize<System.Collections.Generic.Dictionary<string, object>>(File.ReadAllText(Path.Combine(payload, "library/catalog.json"), System.Text.Encoding.UTF8));
+                    if (catalog == null || !catalog.ContainsKey("product") || !catalog.ContainsKey("version") ||
+                        Convert.ToString(catalog["product"]) != Product || Convert.ToString(catalog["version"]) != version)
+                        throw new InvalidDataException("Catalog product and release version must match.");
+                }
             }
             if (!File.Exists(Path.Combine(payload, "index.html"))) throw new InvalidDataException("패널 시작 파일이 없습니다.");
         }
+        // END PAYLOAD CONTRACT
         static void OwnedDirectory(string dir) {
             if (Directory.Exists(dir) && (File.GetAttributes(dir) & FileAttributes.ReparsePoint) != 0)
                 throw new IOException("설치 대상은 바로가기 또는 연결 폴더일 수 없습니다.");
@@ -372,7 +406,8 @@ namespace ContentriumPreset {
                 HostClosed(); Progress("기존 설치를 보존하고 새 버전 설치 중…", 78);
                 Directory.CreateDirectory(CepRoot); Directory.CreateDirectory(Path.GetDirectoryName(ProgramDir)); Directory.CreateDirectory(Path.GetDirectoryName(MenuDir));
                 OwnedDirectory(CepRoot); OwnedDirectory(Extension); OwnedDirectory(ProgramDir); OwnedDirectory(MenuDir);
-                if (Directory.Exists(Extension)) ValidatePayload(Extension);
+                // Older owned installs may have one panel and fewer runtime modules; preserve upgrade eligibility.
+                if (Directory.Exists(Extension)) ValidatePayload(Extension, null, false);
                 if (Directory.Exists(ProgramDir)) {
                     string receipt = Path.Combine(ProgramDir, "install-receipt.json");
                     var existing = File.Exists(receipt) ? Json.Deserialize<Dictionary<string, object>>(File.ReadAllText(receipt, Encoding.UTF8)) : null;

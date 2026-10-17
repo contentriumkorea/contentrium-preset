@@ -1,16 +1,205 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Contentrium Preset</title><link rel="icon" href="assets/icon.svg" type="image/svg+xml"><link rel="stylesheet" href="panel.css"></head>
-<body>
-  <header class="topbar"><div class="brand" title="Contentrium Preset">Contentrium <span>Preset</span></div><button id="browse-tab" class="tab active" aria-selected="true">Browse</button><button id="edit-tab" class="tab" aria-selected="false">Edit</button><div class="topbar-right"><button id="audio-open" class="audio-open" type="button" title="개인 효과음 등록 안내">Audio</button><span id="connection" class="connection">Browser</span><button id="refresh" class="icon-button" title="선택 레이어와 목록 새로고침" aria-label="새로고침">↻</button></div></header>
-  <main id="browse-view" class="browse-view">
-    <aside id="tree-panel" class="tree-panel"><div class="search-bar"><button id="favorites-toggle" class="icon-button favorite-filter" title="즐겨찾기만 보기" aria-label="즐겨찾기만 보기" aria-pressed="false">★</button><input id="search" type="search" placeholder="Search items" aria-label="항목 검색"><button id="clear-search" class="icon-button" title="검색 지우기" aria-label="검색 지우기">×</button></div><div id="category-tree" class="category-tree" role="tree" aria-label="분류"></div><div class="tree-footer"><span id="library-count"></span><label class="size-label" title="썸네일 크기"><span>−</span><input id="thumbnail-size" type="range" min="150" max="320" step="10" value="190" aria-label="썸네일 크기"><span>＋</span></label></div></aside>
-    <div id="resizer" class="resizer" role="separator" aria-orientation="vertical" title="분류 영역 너비 조절"></div>
-    <section class="grid-panel"><div class="grid-heading"><button id="variants-back" class="variants-back hidden" type="button">‹ Back</button><div id="breadcrumbs" class="breadcrumbs">All items</div></div><div id="preset-grid" class="preset-grid" role="list" aria-label="프리셋"></div><footer class="apply-footer"><div id="selection-label" class="selection-label">프리셋을 선택하세요.</div><div id="variant-summary" class="variant-summary"></div><div id="apply-actions" class="apply-actions"></div></footer></section>
-  </main>
-  <main id="edit-view" class="edit-view hidden"><div id="audio-notice" class="audio-notice hidden" role="status"><span id="audio-notice-text"></span><button id="audio-notice-guide" type="button">등록 안내</button></div><div class="editor-selection"><span id="selected-layer">레이어 선택 상태를 확인하려면 AE에서 패널을 열어주세요.</span><button id="capture" class="small-button hidden" disabled title="사용자 프리셋 저장">Save Preset</button></div><div id="applied-presets" class="applied-presets"></div><div id="editor-controls" class="editor-controls"></div></main>
-  <div id="status" class="status-bar" role="status" aria-live="polite">프리셋 목록을 읽는 중…</div>
-  <dialog id="capture-dialog"><form id="capture-form"><h2>선택 레이어 프리셋 저장</h2><label for="capture-name">이름</label><input id="capture-name" required maxlength="120" autocomplete="off"><div class="dialog-actions"><button id="capture-cancel" type="button">Cancel</button><button type="submit">Save</button></div></form></dialog>
-  <dialog id="audio-dialog" class="audio-dialog" aria-labelledby="audio-heading"><h2 id="audio-heading">개인 오디오 등록</h2><p id="audio-missing-keys"></p><label for="audio-folder">오디오 폴더 · 선택 후 Ctrl+C로 복사</label><input id="audio-folder" readonly><ol><li>이 폴더에 사용할 WAV, AIF, AIFF 또는 MP3 파일을 넣습니다.</li><li>같은 폴더에 UTF-8 <strong>library.json</strong>을 만들고 아래 키에 본인 파일명을 연결합니다.</li></ol><label for="audio-example">library.json 예시 · 선택 후 Ctrl+C로 복사</label><textarea id="audio-example" rows="8" readonly spellcheck="false"></textarea><p class="audio-hint">파일명은 영문·숫자로 시작하고 영문·숫자·공백·점·밑줄·하이픈을 사용하세요. 등록 후 프리셋을 다시 적용하면 효과음을 함께 가져옵니다. 이미 적용한 인스턴스에 자동으로 추가되지는 않습니다.</p><div class="dialog-actions"><button id="audio-close" type="button">닫기</button></div></dialog>
-  <script src="preview.js"></script><script src="panel.js"></script>
-</body></html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Contentrium Preset</title>
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="panel.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand" title="Contentrium Preset">Contentrium <span>Preset</span></div>
+      <button id="browse-tab" class="tab active" aria-selected="true">Browse</button
+      ><button id="edit-tab" class="tab" aria-selected="false">Edit</button
+      ><button id="tools-tab" class="tab" aria-selected="false">Tools</button
+      ><select id="tab-mode" aria-label="탭 전환 모드" title="자동 전환 또는 탭 고정">
+        <option value="auto">Auto</option>
+        <option value="browse">Browse 고정</option>
+        <option value="edit">Edit 고정</option>
+      </select>
+      <div class="topbar-right">
+        <button id="audio-open" class="audio-open" type="button" title="개인 효과음 등록 안내">
+          Audio</button
+        ><span id="connection" class="connection">Browser</span
+        ><button
+          id="refresh"
+          class="icon-button"
+          title="선택 레이어와 목록 새로고침"
+          aria-label="새로고침"
+        >
+          ↻</button
+        ><button id="panel-menu" class="icon-button" aria-label="패널 메뉴" aria-expanded="false">
+          ☰
+        </button>
+      </div>
+    </header>
+    <main id="browse-view" class="browse-view">
+      <aside id="tree-panel" class="tree-panel">
+        <div class="search-bar">
+          <button
+            id="favorites-toggle"
+            class="icon-button favorite-filter"
+            title="즐겨찾기만 보기"
+            aria-label="즐겨찾기만 보기"
+            aria-pressed="false"
+          >
+            ★</button
+          ><input
+            id="search"
+            type="search"
+            placeholder="Search items"
+            aria-label="항목 검색"
+          /><button
+            id="clear-search"
+            class="icon-button"
+            title="검색 지우기"
+            aria-label="검색 지우기"
+          >
+            ×
+          </button>
+        </div>
+        <label class="label-filter-row"
+          >라벨<select id="label-filter" aria-label="라벨 필터">
+            <option value="add" disabled>라벨 추가…</option>
+            <option value="">모든 라벨</option>
+            <option value="red">빨강</option>
+            <option value="orange">주황</option>
+            <option value="yellow">노랑</option>
+            <option value="green">초록</option>
+            <option value="blue">파랑</option>
+            <option value="purple">보라</option>
+            <option value="none">라벨 없음</option>
+          </select></label
+        >
+        <div id="filter-chips" class="filter-chips hidden" aria-label="현재 검색 필터"></div>
+        <div id="folder-focus" class="folder-focus hidden">
+          <button id="show-all-items" type="button" aria-label="모든 항목 표시">‹ Show all items</button>
+          <div><button id="focus-parent" type="button" aria-label="상위 폴더에 집중" title="상위 폴더">↑</button><span id="focused-folder-name"></span></div>
+        </div>
+        <div id="category-tree" class="category-tree" role="tree" aria-label="분류"></div>
+        <div class="tree-footer">
+          <button id="library-open" class="small-button">사용자 라이브러리</button
+          ><span id="library-count"></span
+          ><label class="size-label" title="썸네일 크기"
+            ><span>−</span
+            ><input
+              id="thumbnail-size"
+              type="range"
+              min="150"
+              max="320"
+              step="10"
+              value="190"
+              aria-label="썸네일 크기"
+            /><span>＋</span></label
+          >
+        </div>
+      </aside>
+      <div
+        id="resizer"
+        class="resizer"
+        role="separator"
+        aria-orientation="vertical"
+        title="분류 영역 너비 조절"
+      ></div>
+      <section class="grid-panel">
+        <div class="grid-heading">
+          <button id="variants-back" class="variants-back hidden" type="button">‹ Back</button>
+          <div id="breadcrumbs" class="breadcrumbs">All items</div>
+          <div id="thumbnail-progress" class="thumbnail-progress hidden" role="status"><span id="thumbnail-progress-label"></span><button id="thumbnail-stop" type="button">생성 중지</button></div>
+        </div>
+        <div id="preset-grid" class="preset-grid" role="list" aria-label="프리셋"></div>
+        <footer class="apply-footer">
+          <div id="selection-label" class="selection-label">프리셋을 선택하세요.</div>
+          <div id="variant-summary" class="variant-summary"></div>
+          <div id="apply-actions" class="apply-actions"></div>
+          <div id="animated-font-entry" hidden></div>
+          <div id="preview-audio-controls" class="preview-audio-controls hidden">
+            <label><input id="preview-audio-muted" type="checkbox" />미리듣기 음소거</label>
+            <input id="preview-audio-volume" type="range" min="0" max="100" value="100" aria-label="미리듣기 볼륨" />
+            <span id="preview-audio-state" role="status"></span>
+          </div>
+        </footer>
+      </section>
+    </main>
+    <main id="edit-view" class="edit-view hidden">
+      <div id="audio-notice" class="audio-notice hidden" role="status">
+        <span id="audio-notice-text"></span
+        ><button id="audio-notice-guide" type="button">등록 안내</button>
+      </div>
+      <div class="editor-selection">
+        <span id="selected-layer">레이어 선택 상태를 확인하려면 AE에서 패널을 열어주세요.</span
+        ><button id="capture" class="small-button hidden" disabled title="사용자 프리셋 저장">
+          Save Preset
+        </button>
+      </div>
+      <div id="applied-presets" class="applied-presets"></div>
+      <div id="editor-controls" class="editor-controls"></div>
+    </main>
+    <main id="tools-view" class="workspace-view hidden">
+      <div id="tools-content" class="tools-content"></div>
+    </main>
+    <main id="settings-view" class="workspace-view hidden">
+      <div id="settings-content" class="workspace-content"></div>
+    </main>
+    <main id="library-view" class="workspace-view hidden">
+      <div id="library-content" class="workspace-content"></div>
+    </main>
+    <div id="context-menu" class="context-menu hidden" role="menu"></div>
+    <div id="status" class="status-bar" role="status" aria-live="polite">
+      프리셋 목록을 읽는 중…
+    </div>
+    <dialog id="capture-dialog">
+      <form id="capture-form">
+        <h2>선택 레이어 프리셋 저장</h2>
+        <label for="capture-name">이름</label
+        ><input id="capture-name" required maxlength="120" autocomplete="off" />
+        <p>기본으로 레이어의 프리셋과 애니메이션을 저장합니다. 필요한 부분만 저장하려면 타임라인에서 속성을 선택하세요.</p>
+        <label><input id="capture-selected-only" type="checkbox" />선택한 속성만 저장</label>
+        <label><input id="capture-source-text" type="checkbox" />글자 내용과 서식도 포함</label>
+        <div class="dialog-actions">
+          <button id="capture-cancel" type="button">취소</button
+          ><button type="submit">저장</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="audio-dialog" class="audio-dialog" aria-labelledby="audio-heading">
+      <h2 id="audio-heading">개인 오디오 등록</h2>
+      <p id="audio-missing-keys"></p>
+      <label for="audio-folder">오디오 폴더 · 선택 후 Ctrl+C로 복사</label
+      ><input id="audio-folder" readonly />
+      <ol>
+        <li>이 폴더에 사용할 WAV, AIF, AIFF 또는 MP3 파일을 넣습니다.</li>
+        <li>
+          같은 폴더에 UTF-8 <strong>library.json</strong>을 만들고 아래 키에 본인 파일명을
+          연결합니다.
+        </li>
+      </ol>
+      <label for="audio-example">library.json 예시 · 선택 후 Ctrl+C로 복사</label
+      ><textarea id="audio-example" rows="8" readonly spellcheck="false"></textarea>
+      <p class="audio-hint">
+        파일명은 영문·숫자로 시작하고 영문·숫자·공백·점·밑줄·하이픈을 사용하세요. 등록 후 프리셋을
+        다시 적용하면 효과음을 함께 가져옵니다. 이미 적용한 인스턴스에 자동으로 추가되지는 않습니다.
+      </p>
+      <div class="dialog-actions"><button id="audio-close" type="button">닫기</button></div>
+    </dialog>
+    <script src="ui-file-lease.js"></script>
+    <script src="preview.js"></script>
+    <script src="preview-audio-preparer.js"></script>
+    <script src="preview-audio-source.js"></script>
+    <script src="ui-core.js"></script>
+    <script src="ui-sync.js"></script>
+    <script src="ui-property-sets.js"></script>
+    <script src="ui-media.js"></script>
+    <script src="ui-editor.js"></script>
+    <script src="ui-audio.js"></script>
+    <script src="ui-audio-export.js"></script>
+    <script src="ui-library.js"></script>
+    <script src="ui-thumbnails.js"></script>
+    <script src="ui-thumbnail-worker.js"></script>
+    <script src="ui-theme.js"></script>
+    <script src="ui-workspace.js"></script>
+    <script src="ui-animated-font.js"></script>
+    <script src="panel.js"></script>
+  </body>
+</html>

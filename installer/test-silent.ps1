@@ -13,6 +13,7 @@ $parse=$assembly.GetType('ContentriumPreset.Options').GetMethod('Parse')
 $taskRoot=Join-Path ([IO.Path]::GetTempPath()) ('ContentriumPreset-SilentQA-'+[guid]::NewGuid().ToString('N'))
 [IO.Directory]::CreateDirectory($taskRoot) | Out-Null
 $results=[Collections.Generic.List[object]]::new()
+. (Join-Path $PSScriptRoot 'payload-fixture.ps1')
 function Assert-True([bool]$Value,[string]$Message) { if (-not $Value) { throw $Message } }
 function Parse-Options([string[]]$Values) { return $parse.Invoke($null,@(,$Values)) }
 function Run-Setup([string]$Exe,[string[]]$Values,[int]$Expected) {
@@ -49,9 +50,7 @@ try {
     $results.Add(@{test='production parse failure exits nonzero without GUI';pass=$true})
     $source=Join-Path $taskRoot 'offline'
     $extension=Join-Path $source 'com.contentrium.preset'
-    [IO.Directory]::CreateDirectory((Join-Path $extension 'CSXS')) | Out-Null
-    [IO.File]::WriteAllText((Join-Path $extension 'CSXS\manifest.xml'),'<ExtensionManifest ExtensionBundleId="com.contentrium.preset" ExtensionBundleVersion="1.1.0"><ExtensionList><Extension Id="com.contentrium.preset" Version="1.1.0"/></ExtensionList></ExtensionManifest>')
-    [IO.File]::WriteAllText((Join-Path $extension 'index.html'),'silent-fixture')
+    New-CompletePayloadFixture $extension '1.1.0' 'silent-fixture'
     $hashes=@{}
     foreach ($file in Get-ChildItem -LiteralPath $source -File -Recurse) { $hashes[$file.FullName.Substring($source.Length+1).Replace('\','/')]=(Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant() }
     [IO.File]::WriteAllText((Join-Path $source 'package-info.json'),(@{schemaVersion=1;product='Contentrium Preset';version='1.1.0';extensionId='com.contentrium.preset';files=$hashes}|ConvertTo-Json -Depth 5))

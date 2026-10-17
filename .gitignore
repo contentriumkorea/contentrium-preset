@@ -26,6 +26,8 @@
 
 # Local tooling and credentials
 node_modules/
+.superpowers/
+docs/superpowers/
 __pycache__/
 *.pyc
 .DS_Store

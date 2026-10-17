@@ -1,10 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ExtensionManifest Version="7.0" ExtensionBundleId="com.contentrium.preset" ExtensionBundleVersion="1.1.1" ExtensionBundleName="Contentrium Preset">
- <ExtensionList><Extension Id="com.contentrium.preset" Version="1.1.1"/></ExtensionList>
+<ExtensionManifest Version="7.0" ExtensionBundleId="com.contentrium.preset" ExtensionBundleVersion="1.2.0" ExtensionBundleName="Contentrium Preset">
+ <ExtensionList><Extension Id="com.contentrium.preset" Version="1.2.0"/><Extension Id="com.contentrium.preset.edit" Version="1.2.0"/><Extension Id="com.contentrium.preset.alt2" Version="1.2.0"/><Extension Id="com.contentrium.preset.alt3" Version="1.2.0"/><Extension Id="com.contentrium.preset.alt4" Version="1.2.0"/><Extension Id="com.contentrium.preset.easing" Version="1.2.0"/><Extension Id="com.contentrium.preset.keyframes" Version="1.2.0"/><Extension Id="com.contentrium.preset.anchor" Version="1.2.0"/><Extension Id="com.contentrium.preset.shifter" Version="1.2.0"/></ExtensionList>
  <ExecutionEnvironment><HostList><Host Name="AEFT" Version="[22.0,99.9]"/></HostList><LocaleList><Locale Code="All"/></LocaleList><RequiredRuntimeList><RequiredRuntime Name="CSXS" Version="11.0"/></RequiredRuntimeList></ExecutionEnvironment>
  <DispatchInfoList><Extension Id="com.contentrium.preset"><DispatchInfo>
   <Resources><MainPath>./index.html</MainPath><ScriptPath>./jsx/engine.jsx</ScriptPath><CEFCommandLine><Parameter>--enable-nodejs</Parameter></CEFCommandLine></Resources>
   <Lifecycle><AutoVisible>true</AutoVisible></Lifecycle>
   <UI><Type>Panel</Type><Menu>Contentrium Preset</Menu><Geometry><Size><Width>1200</Width><Height>720</Height></Size><MinSize><Width>380</Width><Height>320</Height></MinSize></Geometry></UI>
+ </DispatchInfo></Extension><Extension Id="com.contentrium.preset.edit"><DispatchInfo>
+  <Resources><MainPath>./index.html?view=edit</MainPath><ScriptPath>./jsx/engine.jsx</ScriptPath><CEFCommandLine><Parameter>--enable-nodejs</Parameter></CEFCommandLine></Resources>
+  <Lifecycle><AutoVisible>true</AutoVisible></Lifecycle>
+  <UI><Type>Panel</Type><Menu>Contentrium Preset Edit</Menu><Geometry><Size><Width>1200</Width><Height>720</Height></Size><MinSize><Width>380</Width><Height>320</Height></MinSize></Geometry></UI>
+ </DispatchInfo></Extension>
+<Extension Id="com.contentrium.preset.alt2"><DispatchInfo>
+  <Resources><MainPath>./index.html?view=alt2</MainPath><ScriptPath>./jsx/engine.jsx</ScriptPath><CEFCommandLine><Parameter>--enable-nodejs</Parameter></CEFCommandLine></Resources>
+  <Lifecycle><AutoVisible>true</AutoVisible></Lifecycle>
+  <UI><Type>Panel</Type><Menu>Contentrium Preset 2</Menu><Geometry><Size><Width>1200</Width><Height>720</Height></Size><MinSize><Width>380</Width><Height>320</Height></MinSize></Geometry></UI>
+ </DispatchInfo></Extension>
+<Extension Id="com.contentrium.preset.alt3"><DispatchInfo>
+  <Resources><MainPath>./index.html?view=alt3</MainPath><ScriptPath>./jsx/engine.jsx</ScriptPath><CEFCommandLine><Parameter>--enable-nodejs</Parameter></CEFCommandLine></Resources>
+  <Lifecycle><AutoVisible>true</AutoVisible></Lifecycle>
+  <UI><Type>Panel</Type><Menu>Contentrium Preset 3</Menu><Geometry><Size><Width>1200</Width><Height>720</Height></Size><MinSize><Width>380</Width><Height>320</Height></MinSize></Geometry></UI>
+ </DispatchInfo></Extension>
+<Extension Id="com.contentrium.preset.alt4"><DispatchInfo>
+  <Resources><MainPath>./index.html?view=alt4</MainPath><ScriptPath>./jsx/engine.jsx</ScriptPath><CEFCommandLine><Parameter>--enable-nodejs</Parameter></CEFCommandLine></Resources>
+  <Lifecycle><AutoVisible>true</AutoVisible></Lifecycle>
+  <UI><Type>Panel</Type><Menu>Contentrium Preset 4</Menu><Geometry><Size><Width>1200</Width><Height>720</Height></Size><MinSize><Width>380</Width><Height>320</Height></MinSize></Geometry></UI>
+ </DispatchInfo></Extension><Extension Id="com.contentrium.preset.easing"><DispatchInfo>
+  <Resources><MainPath>./index.html?view=easing</MainPath><ScriptPath>./jsx/engine.jsx</ScriptPath><CEFCommandLine><Parameter>--enable-nodejs</Parameter></CEFCommandLine></Resources>
+  <Lifecycle><AutoVisible>true</AutoVisible></Lifecycle>
+  <UI><Type>Panel</Type><Menu>Contentrium Preset Easing</Menu><Geometry><Size><Width>460</Width><Height>560</Height></Size><MinSize><Width>300</Width><Height>260</Height></MinSize></Geometry></UI>
+ </DispatchInfo></Extension><Extension Id="com.contentrium.preset.keyframes"><DispatchInfo>
+  <Resources><MainPath>./index.html?view=keyframes</MainPath><ScriptPath>./jsx/engine.jsx</ScriptPath><CEFCommandLine><Parameter>--enable-nodejs</Parameter></CEFCommandLine></Resources>
+  <Lifecycle><AutoVisible>true</AutoVisible></Lifecycle>
+  <UI><Type>Panel</Type><Menu>Contentrium Preset Keyframes</Menu><Geometry><Size><Width>460</Width><Height>560</Height></Size><MinSize><Width>300</Width><Height>260</Height></MinSize></Geometry></UI>
+ </DispatchInfo></Extension><Extension Id="com.contentrium.preset.anchor"><DispatchInfo>
+  <Resources><MainPath>./index.html?view=anchor</MainPath><ScriptPath>./jsx/engine.jsx</ScriptPath><CEFCommandLine><Parameter>--enable-nodejs</Parameter></CEFCommandLine></Resources>
+  <Lifecycle><AutoVisible>true</AutoVisible></Lifecycle>
+  <UI><Type>Panel</Type><Menu>Contentrium Preset Anchor Point</Menu><Geometry><Size><Width>460</Width><Height>560</Height></Size><MinSize><Width>300</Width><Height>260</Height></MinSize></Geometry></UI>
+ </DispatchInfo></Extension><Extension Id="com.contentrium.preset.shifter"><DispatchInfo>
+  <Resources><MainPath>./index.html?view=shifter</MainPath><ScriptPath>./jsx/engine.jsx</ScriptPath><CEFCommandLine><Parameter>--enable-nodejs</Parameter></CEFCommandLine></Resources>
+  <Lifecycle><AutoVisible>true</AutoVisible></Lifecycle>
+  <UI><Type>Panel</Type><Menu>Contentrium Preset Transition Shifter</Menu><Geometry><Size><Width>460</Width><Height>560</Height></Size><MinSize><Width>300</Width><Height>260</Height></MinSize></Geometry></UI>
  </DispatchInfo></Extension></DispatchInfoList>
 </ExtensionManifest>

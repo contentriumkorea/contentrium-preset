@@ -7,7 +7,7 @@ $output = Join-Path $taskRoot 'output'
 [IO.Directory]::CreateDirectory((Join-Path $payload 'CSXS')) | Out-Null
 [IO.Directory]::CreateDirectory((Join-Path $payload 'library')) | Out-Null
 $results = [Collections.Generic.List[object]]::new()
-function Write-Fixture([string]$PackageVersion, [string]$CatalogVersion, [string]$CatalogProduct = 'Contentrium Preset', [string]$CepVersion = '1.1.1') {
+function Write-Fixture([string]$PackageVersion, [string]$CatalogVersion, [string]$CatalogProduct = 'Contentrium Preset', [string]$CepVersion = '1.2.0') {
     $xml = '<ExtensionManifest ExtensionBundleId="com.contentrium.preset" ExtensionBundleVersion="VERSION"><ExtensionList><Extension Id="com.contentrium.preset" Version="VERSION"/></ExtensionList></ExtensionManifest>'
     [IO.File]::WriteAllText((Join-Path $payload 'CSXS\manifest.xml'), $xml.Replace('VERSION',$CepVersion))
     [IO.File]::WriteAllText((Join-Path $payload 'package.json'), (@{name='contentrium-preset';version=$PackageVersion} | ConvertTo-Json))
@@ -21,13 +21,13 @@ function Assert-Rejected([string]$Name, [string]$ExpectedMessage) {
     $results.Add(@{test=$Name;pass=$true})
 }
 try {
-    Write-Fixture '1.0.0' '1.1.1'
+    Write-Fixture '1.0.0' '1.2.0'
     Assert-Rejected 'package version mismatch before compile' 'package.json product and release version'
-    Write-Fixture '1.1.1' '1.0.0'
+    Write-Fixture '1.2.0' '1.0.0'
     Assert-Rejected 'catalog version mismatch before compile' 'Catalog product and release version'
-    Write-Fixture '1.1.1' '1.1.1' 'Other Product'
+    Write-Fixture '1.2.0' '1.2.0' 'Other Product'
     Assert-Rejected 'catalog product mismatch before compile' 'Catalog product and release version'
-    Write-Fixture '1.1.1' '1.1.1' 'Contentrium Preset' '1.0.0'
+    Write-Fixture '1.2.0' '1.2.0' 'Contentrium Preset' '1.0.0'
     Assert-Rejected 'CEP version mismatch before compile' 'CEP manifest and release version'
     [pscustomobject]@{tests=$results.Count;passed=$results.Count;results=$results;installerBuilt=$false;installed=$false;published=$false} | ConvertTo-Json -Depth 5
 } finally {

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "packs": [
+    {
+      "id": "contentrium-grid",
+      "digest": "sha256:b49c367b2bd7014c14eab667caac1b211f9a537c249eb1ffb7e58a5158821f9d",
+      "file": "contentrium-grid.cfont.json",
+      "preview": "library/fonts/contentrium-grid.webm"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const engineHost=new Function('require','__dirname',fs.readFileSync(path.join(__dirname,'engine.test.cjs'),'utf8')+'\nreturn host;')(n=>n==='node:test'?()=>{}:require(n),__dirname);
+function setup(){const h=engineHost(),data={schemaVersion:2,kind:'user-property-preset',captureTime:0,properties:[],dependencies:[]};h.modules.cpWorkspace.find=()=>({id:'owned-local-mask',kind:'preset'});h.modules.cpWorkspace.readPreset=()=>data;return{h,data};}
+test('actual describe/apply facade accepts validated generic schema2, forwards source stamp and capture options',()=>{
+ const {h,data}=setup(),calls=[],state=h.call('getState').result;h.modules.cpUserPreset.validate=d=>{assert.equal(d,data);calls.push('validate');return true;};h.modules.cpUserPreset.preflight=(l,d,o)=>{calls.push('preflight');assert.equal(d,data);assert.equal(o.overwrite,true);};h.modules.cpUserPreset.apply=(l,d,o)=>{calls.push('apply');assert.equal(o.undoGroup,false);return{applied:true};};
+ const r=h.call('describeLibraryPreset',{id:'owned-local-mask',sourceStamp:{size:42}});assert.equal(r.ok,true,r.error?.message);assert.deepEqual(r.result,{kind:'user-property-preset',containsSourceText:false});assert.deepEqual(h.events,[]);const applied=h.call('importLibraryItem',{id:'owned-local-mask',context:state.context,expectedRevision:state.projectRevision,options:{overwrite:true}});assert.equal(applied.ok,true,applied.error?.message);assert(calls.includes('validate'));assert(calls.includes('apply'));
+});
+test('generic schema2 structure or any selected-target preflight refusal happens before any Undo/apply',()=>{
+ for(const mode of ['structure','target']){const {h}=setup();h.layers[1].selected=true;let applies=0,checked=0;h.modules.cpUserPreset.validate=()=>{if(mode==='structure'){const e=Error('bad dependency');e.code='INVALID_USER_PRESET';throw e;}};h.modules.cpUserPreset.preflight=()=>{checked++;if(mode==='target'&&checked===2){const e=Error('missing mask support');e.code='DEPENDENCY_MISSING';throw e;}};h.modules.cpUserPreset.apply=()=>applies++;const r=h.call('importLibraryItem',{id:'owned-local-mask'});assert.equal(r.ok,false);assert.equal(r.error.code,mode==='structure'?'INVALID_USER_PRESET':'DEPENDENCY_MISSING');assert.equal(applies,0);assert.deepEqual(h.events,[]);}
+});
+test('schema2 allowlist does not widen precomp/texture/font and schema1 description remains accepted',()=>{
+ const {h,data}=setup();h.modules.cpUserPreset.validate=()=>true;for(const kind of ['precomp','texture','animated-font']){data.kind=kind;assert.equal(h.call('describeLibraryPreset',{id:'owned-local-mask'}).error.code,'INVALID_PRESET_DATA');}data.kind='user-property-preset';data.schemaVersion=1;assert.equal(h.call('describeLibraryPreset',{id:'owned-local-mask'}).ok,true);data.schemaVersion=3;assert.equal(h.call('describeLibraryPreset',{id:'owned-local-mask'}).ok,false);
+});
+test('schema1 description invokes the readonly generic validator before presenting an Apply route',()=>{
+ const {h,data}=setup();data.schemaVersion=1;let calls=0;h.modules.cpUserPreset.validate=d=>{calls++;assert.equal(d,data);const e=Error('raw reference refused');e.code='INVALID_USER_PRESET';throw e;};const r=h.call('describeLibraryPreset',{id:'owned-local-mask'});assert.equal(r.ok,false);assert.equal(r.error.code,'INVALID_USER_PRESET');assert.equal(calls,1);assert.deepEqual(h.events,[]);
+});
+test('generic description refuses missing validation capability for both declared schemas before any Undo',()=>{
+ for(const version of [1,2]){const {h,data}=setup();data.schemaVersion=version;delete h.modules.cpUserPreset.validate;const r=h.call('describeLibraryPreset',{id:'owned-local-mask'});assert.equal(r.ok,false);assert.equal(r.error.code,'CAPTURE_UNAVAILABLE');assert.deepEqual(h.events,[]);}
+});
+test('schema1 direct library import preflights raw-reference refusal before opening Undo',()=>{
+ const {h,data}=setup();data.schemaVersion=1;h.modules.cpUserPreset.validate=()=>{const e=Error('raw reference refused');e.code='INVALID_USER_PRESET';throw e;};let applies=0;h.modules.cpUserPreset.preflight=()=>{const e=Error('raw reference refused');e.code='INVALID_USER_PRESET';throw e;};h.modules.cpUserPreset.apply=()=>applies++;const r=h.call('importLibraryItem',{id:'owned-local-mask'});assert.equal(r.ok,false);assert.equal(r.error.code,'INVALID_USER_PRESET');assert.equal(applies,0);assert.deepEqual(h.events,[]);
+});

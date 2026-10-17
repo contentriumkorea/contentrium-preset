@@ -1,10 +1,13 @@
 {
   "name": "contentrium-preset",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "private": true,
   "description": "After Effects animation preset panel",
   "scripts": {
     "test": "node --test tests/*.test.cjs",
     "verify": "node tools/verify-package.cjs"
+  },
+  "devDependencies": {
+    "acorn": "8.15.0"
   }
 }

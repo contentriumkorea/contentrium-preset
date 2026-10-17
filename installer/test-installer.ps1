@@ -13,6 +13,7 @@ if ($PSVersionTable.PSEdition -eq 'Core') {
     return
 }
 Add-Type -AssemblyName System.IO.Compression.FileSystem
+. (Join-Path $PSScriptRoot 'payload-fixture.ps1')
 $testRoot = Join-Path ([IO.Path]::GetTempPath()) ('ContentriumPreset-QA-' + [guid]::NewGuid().ToString('N'))
 [IO.Directory]::CreateDirectory($testRoot) | Out-Null
 $results = [Collections.Generic.List[object]]::new()
@@ -20,9 +21,7 @@ function Assert-True([bool]$Value, [string]$Message) { if (-not $Value) { throw 
 function Make-Package([string]$Name, [string]$Value, [string]$BadEntry, [string]$CepVersion = '1.0.0') {
     $source = Join-Path $testRoot ($Name + '-source')
     $extension = Join-Path $source 'com.contentrium.preset'
-    [IO.Directory]::CreateDirectory((Join-Path $extension 'CSXS')) | Out-Null
-    [IO.File]::WriteAllText((Join-Path $extension 'CSXS\manifest.xml'), ('<ExtensionManifest ExtensionBundleId="com.contentrium.preset" ExtensionBundleVersion="VERSION"><ExtensionList><Extension Id="com.contentrium.preset" Version="VERSION"/></ExtensionList></ExtensionManifest>').Replace('VERSION',$CepVersion))
-    [IO.File]::WriteAllText((Join-Path $extension 'index.html'), $Value)
+    New-CompletePayloadFixture $extension $CepVersion $Value
     $files = @{}
     foreach ($file in Get-ChildItem -LiteralPath $source -File -Recurse) { $files[$file.FullName.Substring($source.Length + 1).Replace('\','/')] = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant() }
     [IO.File]::WriteAllText((Join-Path $source 'package-info.json'), (@{schemaVersion=1; product='Contentrium Preset'; extensionId='com.contentrium.preset'; version='1.0.0'; files=$files} | ConvertTo-Json -Depth 5))

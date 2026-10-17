@@ -1,0 +1,65 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),api=require('../thumbnail-worker/worker-contract.cjs');
+const inventory=require('./fixtures/shape-native-inventory.json').result.compositions[0],capabilities=require('./fixtures/shape-native-capabilities.json').result.rows[0];
+const source={libraryId:'own',kind:'project',path:'C:\\CPU\\shape.aep',bytes:163081,sha256:'a'.repeat(64),sourceStamp:{path:'c:/cpu/shape.aep',kind:'project',size:163081,modifiedMs:1}},dir='C:\\CPU\\run',nonce='b'.repeat(64),id='12345678-1234-1234-1234-123456789abc';
+function request(policy='solid-rect-v1',choice=null){return {...api.makeRequest({operation:choice?'render':'discover',source,choice,runDirectory:dir,requestId:id}),policy};}
+function harness(edit,policy='solid-rect-v1',choice=null,env=nonce){
+ const files=new Map(),calls={open:0,render:0,app:0,file:0},shapeData=structuredClone(inventory.shape);
+ class Property {constructor(d){Object.assign(this,d);this.propertyType=d.type;this.numKeys=d.keys||0;this.expression=d.expression||'';this.children=(d.children||[]).map(x=>new Property(x));this.numProperties=this.children.length;}property(k){return typeof k==='number'?this.children[k-1]:this.children.find(x=>x.matchName===k);}}
+ class ShapeLayer {constructor(){Object.assign(this,shapeData);this.source=null;this.parent=null;this.blendingMode=5212;this.children=shapeData.properties.map(x=>new Property(x));this.numProperties=this.children.length;this.property('ADBE Layer Styles').enabled=false;this.property('ADBE Layer Styles').isModified=false;}property(k){return typeof k==='number'?this.children[k-1]:this.children.find(x=>x.matchName===k);}}
+ class AVLayer{} class FootageItem{} class SolidSource{} class FolderItem{} class CompItem{}
+ const layer=new ShapeLayer(),comp=Object.assign(new CompItem(),{name:'Own rect',width:320,height:180,pixelAspect:1,duration:2,frameDuration:1/30,frameRate:30,displayStartTime:0,numLayers:1,layer(){return layer;},saveFrameToPng(time,file){calls.render++;const b=Buffer.alloc(48);Buffer.from([137,80,78,71,13,10,26,10]).copy(b);b.writeUInt32BE(13,8);b.write('IHDR',12);b.writeUInt32BE(this.width,16);b.writeUInt32BE(this.height,20);Buffer.from([0,0,0,0,73,69,78,68,174,66,96,130]).copy(b,36);files.set(file.fsName,b.toString('latin1'));}});
+ const project={file:{fsName:source.path},numItems:1,renderQueue:{numItems:0,rendering:false},item(){return comp;}},empty={file:null,dirty:false,numItems:0,renderQueue:{numItems:0,rendering:false}};let current=empty;
+ class File {constructor(name){calls.file++;this.fsName=name;this.alias=false;this.parent={fsName:path.win32.dirname(name),exists:true,alias:false};this.position=0;}get exists(){return this.fsName===source.path||files.has(this.fsName);}get length(){return (files.get(this.fsName)||'').length;}open(mode){this.mode=mode;return true;}write(s){files.set(this.fsName,s);return true;}read(n){const s=files.get(this.fsName)||'';const v=n===undefined?s.slice(this.position):s.slice(this.position,this.position+n);this.position+=v.length;return v;}seek(n){this.position=n;return true;}close(){return true;}}
+ const app={get version(){calls.app++;return'26.5x89';},get isRenderEngine(){calls.app++;return true;},get project(){calls.app++;return current;},open(){calls.open++;current=project;return project;}};
+ if(edit)edit({layer,comp,project,files,Property,ShapeLayer,AVLayer,FootageItem,SolidSource,FolderItem,CompItem});
+ const q=request(policy,choice),template=fs.readFileSync(path.resolve(__dirname,'../thumbnail-worker/jsx/thumbnail-worker.template.jsx'),'utf8'),code=template.replace('__NONCE__',()=>JSON.stringify(nonce)).replace('__RECEIPT__',()=>JSON.stringify(dir+'\\handshake.json')).replace('__REQUEST__',()=>JSON.stringify(q)).replace('__REQUEST_SHA256__',()=>JSON.stringify(api.hash(JSON.stringify(q))));
+ const context=vm.createContext({$:{getenv:n=>n==='CONTENTRIUM_SCRIPT_WORKER_NONCE'?env:dir+'\\handshake.json',sleep(){}},app,File,ShapeLayer,AVLayer,FootageItem,SolidSource,FolderItem,CompItem,PropertyType:{PROPERTY:'6212',NAMED_GROUP:'6213',INDEXED_GROUP:'6214'},BlendingMode:{NORMAL:5212},console});function adapt(q){if(Array.isArray(q.value))q.value=vm.runInContext(JSON.stringify(q.value),context);for(const child of q.children||[])adapt(child);}adapt(layer);vm.runInContext(code,context);
+ return{result:files.has(dir+'\\handshake.json')?JSON.parse(files.get(dir+'\\handshake.json')):null,request:q,calls,layer,comp};
+}
+test('actual measured native shape is not AVLayer; explicit rect policy discovers it with exact scan owner',()=>{const h=harness();assert.equal(inventory.shape.isAV,false);assert.equal(h.layer instanceof Object,true);assert.equal(h.result.manifest.policy,'solid-rect-v1');assert.equal(h.result.manifest.projectEligible,true,h.result.manifest.reason);assert.equal(h.result.manifest.compositions[0].layers[0].kind,'rect-fill');assert.equal(h.result.scan.layers.length,1);assert(h.result.scan.layers[0].completed);assert.equal(h.calls.render,0);api.validateResult(h.result,h.request,nonce);});
+test('default solid-v1 remains unchanged and refuses a shape rather than falsely treating it as footage',()=>{const h=harness(null,'solid-v1');assert.equal(h.result.manifest.policy,'solid-v1');assert.equal(h.result.manifest.projectEligible,false);assert.equal(h.calls.render,0);});
+test('explicit policy request survives compile; unknown policy fails before code generation',()=>{const q=api.makeRequest({operation:'discover',source,choice:null,policy:'solid-rect-v1',runDirectory:dir,requestId:id});assert.equal(q.policy,'solid-rect-v1');assert(api.compile(nonce,dir+'\\handshake.json',q).includes('solid-rect-v1'));assert.throws(()=>api.makeRequest({operation:'discover',source,choice:null,policy:'unknown',runDirectory:dir,requestId:id}),/POLICY/);});
+test('old solid-v1 default request, opaque choices, selected record and cache key match pinned baseline golden exactly',()=>{const old=require('./fixtures/solid-v1-wire-golden.json');assert.deepEqual(api.makeRequest(old.requestInput),old.defaultRequest);assert.deepEqual(api.choices(old.manifest),old.choices);assert.deepEqual(api.select(old.manifest,old.choices[0].token),old.choice);assert.equal(api.cacheKey(old.keyInput),old.cacheKey);});
+test('new policy cannot reuse old policy cache or cross-select a mismatched explicit request policy',()=>{const old=require('./fixtures/solid-v1-wire-golden.json'),m=structuredClone(old.manifest);m.policy='solid-rect-v1';const choice=api.select(m,api.choices(m)[0].token);assert.notEqual(api.cacheKey({...old.keyInput,choice}),old.cacheKey);assert.notEqual(choice.token,old.choice.token);assert.throws(()=>api.makeRequest({...old.requestInput,operation:'render',choice,policy:'solid-v1'}),/POLICY/);});
+test('native rect discovery selection renders all 12 planned frames under new exact wire union',()=>{const d=harness(),m=d.result.manifest;assert(m.projectEligible,m.reason);const choice=api.select(m,api.choices(m)[0].token);assert.equal(choice.policy,'solid-rect-v1');const h=harness(null,'solid-rect-v1',choice);assert.equal(h.result.ok,true,h.result.error&&h.result.error.message);assert.equal(h.calls.render,12);assert.equal(api.validateResult(h.result,h.request,nonce).pixelDecoded,false);});
+for(const [name,edit] of [
+ ['additional vector group',h=>{const r=h.layer.property('ADBE Root Vectors Group');r.children.push(r.children[0]);r.numProperties++;}],
+ ['unknown operator',h=>h.layer.property('ADBE Root Vectors Group').property(1).property('ADBE Vectors Group').property(1).matchName='ADBE Vector Filter - Trim'],
+ ['keyed static rectangle',h=>h.layer.property('ADBE Root Vectors Group').property(1).property('ADBE Vectors Group').property(1).property('ADBE Vector Rect Size').numKeys=1],
+ ['disabled nonempty nested expression',h=>{const q=h.layer.property('ADBE Root Vectors Group').property(1).property('ADBE Vectors Group').property(1).property('ADBE Vector Rect Position');q.expression='1';q.expressionEnabled=false;}],
+ ['modified style',h=>h.layer.property('ADBE Layer Styles').isModified=true],
+ ['enabled style',h=>h.layer.property('ADBE Layer Styles').enabled=true],
+ ['unknown style capability',h=>delete h.layer.property('ADBE Layer Styles').enabled],
+ ['track matte',h=>h.layer.hasTrackMatte=true],
+ ['guide layer',h=>h.layer.guideLayer=true],
+ ['time remap',h=>h.layer.timeRemapEnabled=true],
+ ['parent',h=>h.layer.parent={}],
+ ['3D',h=>h.layer.threeDLayer=true],
+ ['mask',h=>{const q=h.layer.property('ADBE Mask Parade');q.numProperties=1;}],
+ ['effect',h=>h.layer.property('ADBE Effect Parade').numProperties=1],
+ ['unknown vector material leaf',h=>h.layer.property('ADBE Root Vectors Group').property(1).property('ADBE Vector Materials Group').property(1).matchName='UNPROVEN'],
+ ['allowed transform key count 121',h=>h.layer.property('ADBE Transform Group').property('ADBE Position').numKeys=121],
+ ['unknown allowed transform key count',h=>h.layer.property('ADBE Transform Group').property('ADBE Position').numKeys=undefined],
+ ['unknown expression capability',h=>h.layer.property('ADBE Root Vectors Group').property(1).property('ADBE Vectors Group').property(1).property('ADBE Vector Rect Position').canSetExpression=undefined],
+ ['unknown dormant style expression capability',h=>h.layer.property('ADBE Layer Styles').property(1).property(1).canSetExpression=undefined],
+ ['unknown property group type',h=>h.layer.property('ADBE Layer Styles').property(1).propertyType='unknown'],
+])test('rect policy refuses '+name+' and requests zero frames',()=>{const h=harness(edit);assert.equal(h.result.manifest.projectEligible,false);assert.equal(h.calls.render,0);});
+test('rect profile accepts the explicit 120 key boundary on allowed layer Position',()=>{const h=harness(x=>x.layer.property('ADBE Transform Group').property('ADBE Position').numKeys=120);assert.equal(h.result.manifest.projectEligible,true,h.result.manifest.reason);});
+test('nonce mismatch remains zero app/File/project even with new policy',()=>{const h=harness(null,'solid-rect-v1',null,'wrong');assert.equal(h.result,null);assert.equal(h.calls.app,0);assert.equal(h.calls.file,0);assert.equal(h.calls.open,0);});
+test('rect result exact union rejects unknown kind, extra geometry, missing owner or policy downgrade',()=>{const h=harness();assert(h.result.manifest.projectEligible);for(const edit of [j=>j.manifest.compositions[0].layers[0].kind='text',j=>j.manifest.compositions[0].layers[0].untrusted=true,j=>{j.scan={totalLayers:0,totalVisited:0,activeLayer:null,layers:[]};},j=>j.manifest.policy='solid-v1']){const v=structuredClone(h.result);edit(v);assert.throws(()=>api.validateResult(v,h.request,nonce));}});
+function validatePS(value,request){
+ const cp=require('node:child_process'),out=path.resolve(__dirname,'../output');fs.mkdirSync(out,{recursive:true});const root=fs.mkdtempSync(path.join(out,'rect-ps-'));for(const [name,v]of Object.entries({value,request}))fs.writeFileSync(path.join(root,name+'.json'),JSON.stringify(v));
+ const quote=s=>"'"+s.replace(/'/g,"''")+"'",command=`$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';. ${quote(path.resolve(__dirname,'../thumbnail-worker/validate-result.ps1'))};$v=Get-Content -LiteralPath ${quote(path.join(root,'value.json'))} -Encoding UTF8 -Raw|ConvertFrom-Json;$r=Get-Content -LiteralPath ${quote(path.join(root,'request.json'))} -Encoding UTF8 -Raw|ConvertFrom-Json;try{$null=Read-ValidatedHandshake $v '${nonce}' $r '${api.hash(JSON.stringify(request))}';@{ok=$true}|ConvertTo-Json -Compress}catch{@{ok=$false;error=$_.Exception.Message}|ConvertTo-Json -Compress}`;
+ return JSON.parse(cp.execFileSync(path.join(process.env.SystemRoot,'System32/WindowsPowerShell/v1.0/powershell.exe'),['-NoLogo','-NoProfile','-NonInteractive','-EncodedCommand',Buffer.from(command,'utf16le').toString('base64')],{encoding:'utf8',windowsHide:true}).replace(/^\uFEFF/,''));
+}
+test('shipping PowerShell strict validator accepts exact rect shape result',()=>{const h=harness();assert.deepEqual(validatePS(h.result,h.request),{ok:true});});
+test('PowerShell old solid-v1 result keeps old wire shape and is still accepted',()=>{const h=harness(null,'solid-v1');assert.deepEqual(validatePS(h.result,h.request),{ok:true});});
+for(const [name,edit]of [
+ ['unknown kind',v=>v.manifest.compositions[0].layers[0].kind='text'],
+ ['extra rectangle field',v=>v.manifest.compositions[0].layers[0].untrusted=true],
+ ['missing owner',v=>v.scan={totalLayers:0,totalVisited:0,activeLayer:null,layers:[]}],
+ ['policy downgrade',v=>v.manifest.policy='solid-v1'],
+ ['unbounded completed scan',v=>{v.scan.layers[0].attemptedNodes=501;v.scan.layers[0].visitedNodes=501;v.scan.totalVisited=501;}],
+])test('both strict validators refuse '+name,()=>{const h=harness();edit(h.result);assert.throws(()=>api.validateResult(h.result,h.request,nonce));assert.equal(validatePS(h.result,h.request).ok,false);});
+module.exports={harness,request,source,dir,nonce,id,capabilities};
