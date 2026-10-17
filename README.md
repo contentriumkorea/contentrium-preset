@@ -2,10 +2,10 @@
 
 After Effects에서 사용하는 프리셋 패널입니다. 43개 프리셋·110개 변형과 Contentrium Grid 애니메이션 폰트를 탐색하고 레이어에 적용·편집할 수 있습니다. 개인 프리셋 저장, 타임라인 IN·OUT 조절, 설정 복사·초기화와 보조 도구를 제공합니다. 검증 환경은 Windows 11, After Effects 2026(26.5)입니다.
 
-| 다운로드 | 설치 방식 |
-| --- | --- |
-| [설치 버전 · Setup.exe](https://github.com/contentriumkorea/contentrium-preset/releases/latest/download/Setup.exe) | 최신 버전을 다운로드하고 전체 설치 |
-| [포터블·오프라인 · Portable.zip](https://github.com/contentriumkorea/contentrium-preset/releases/latest/download/Portable.zip) | 전체 패키지를 압축 해제하고 Install.cmd로 오프라인 설치 |
+| 다운로드 | 크기 | 설치 방식 |
+| --- | --- | --- |
+| [설치 버전 · Setup.exe](https://github.com/contentriumkorea/contentrium-preset/releases/latest/download/Setup.exe) | 약 54KB | 최신 버전을 다운로드하고 전체 설치 |
+| [포터블·오프라인 · Portable.zip](https://github.com/contentriumkorea/contentrium-preset/releases/latest/download/Portable.zip) | 약 13.9MB | 전체 패키지를 압축 해제하고 Install.cmd로 오프라인 설치 |
 
 ## 설치
 

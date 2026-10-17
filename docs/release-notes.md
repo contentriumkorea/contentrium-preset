@@ -18,3 +18,5 @@ After Effects용 프리셋 탐색·적용·편집 패널입니다. 43개 프리�
 검증 환경은 Windows 11·AE 2026(26.5)입니다. 자동 테스트 1,428개가 통과했으며 실제 AE의 대표 공통 기능 시험을 별도로 수행했습니다. 임의 AEP 자동 미리보기와 단일 네이티브 컨트롤러는 활성화하지 않습니다. 효과음 파일은 포함하지 않습니다.
 
 [사용 안내](https://github.com/contentriumkorea/contentrium-preset/blob/main/docs/user-guide.md) · [검증 결과와 지원 범위](https://github.com/contentriumkorea/contentrium-preset/blob/main/docs/verification.md)
+
+배포 후 공개 최신 파일의 해시 일치와 동일 빌드의 온라인 설치(`--silent`)를 확인했습니다. 최신 버전 자동 조회·다운로드·전체 설치, Windows 앱 등록과 런타임 171개 파일 검사, AE 재실행 후 패널 연결과 사용자 설정 보존이 통과했습니다. Setup.exe는 53,760바이트, Portable.zip은 13,893,357바이트입니다.
