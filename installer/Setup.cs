@@ -23,8 +23,8 @@ using Microsoft.Win32;
 [assembly: AssemblyProduct("Contentrium Preset")]
 [assembly: AssemblyCompany("Contentrium")]
 [assembly: AssemblyDescription("Contentrium Preset Windows Installer")]
-[assembly: AssemblyVersion("1.2.0.0")]
-[assembly: AssemblyFileVersion("1.2.0.0")]
+[assembly: AssemblyVersion("1.3.0.0")]
+[assembly: AssemblyFileVersion("1.3.0.0")]
 
 namespace ContentriumPreset {
     public sealed class Options {
@@ -118,6 +118,7 @@ namespace ContentriumPreset {
         public const string Product = "Contentrium Preset", Id = "com.contentrium.preset";
         const string UninstallKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\ContentriumPreset";
         const long MaxArchive = 512L * 1024 * 1024, MaxUnpacked = 1536L * 1024 * 1024;
+        const int MaxCatalogBytes = 32 * 1024 * 1024;
         public readonly Options Options;
         public readonly string CepRoot, Extension, ProgramDir, MenuDir;
         readonly Action<string, int> Progress;
@@ -232,7 +233,7 @@ namespace ContentriumPreset {
         }
         // BEGIN PAYLOAD CONTRACT
         // Build validation reads these literal contracts; tests compare the file list to verify-package.cjs.
-        const string RequiredPayloadPaths = "ui-thumbnail-worker.js|thumbnail-worker/backend.cjs|thumbnail-worker/worker-contract.cjs|thumbnail-worker/prepare.cjs|thumbnail-worker/cancel.cjs|thumbnail-worker/host-binding.ps1|thumbnail-worker/launch.ps1|thumbnail-worker/validate-result.ps1|thumbnail-worker/worker-gate.ps1|thumbnail-worker/jsx/thumbnail-worker.template.jsx|index.html|panel.css|panel.js|ui-core.js|ui-animated-font.js|ui-property-sets.js|ui-editor.js|ui-media.js|ui-sync.js|ui-workspace.js|ui-library.js|ui-thumbnails.js|ui-file-lease.js|ui-theme.js|ui-audio.js|ui-audio-export.js|preview.js|preview-audio-source.js|preview-audio-preparer.js|CSXS/manifest.xml|jsx/engine.jsx|jsx/json-engine.jsx|jsx/presets.jsx|jsx/timeline-engine.jsx|jsx/animated-font-model.jsx|jsx/animated-font-engine.jsx|jsx/font-pack-engine.jsx|library/fonts/index.json|library/fonts/contentrium-grid.cfont.json|library/fonts/LICENSE.txt|library/fonts/contentrium-grid.webm|jsx/overlay-engine.jsx|jsx/audio-engine.jsx|jsx/precomp-engine.jsx|jsx/texture-engine.jsx|jsx/tools-engine.jsx|jsx/sequence-engine.jsx|jsx/workspace-engine.jsx|jsx/user-preset-engine.jsx|jsx/property-set-engine.jsx|jsx/color-engine.jsx|jsx/palette-engine.jsx|jsx/thumbnail-engine.jsx|library/catalog.json|library/preview-profiles.json|library/preview-media.json|assets/icon.svg|assets/preview-before.png|assets/preview-after.png|assets/preview-logo.png";
+        const string RequiredPayloadPaths = "ui-thumbnail-worker.js|thumbnail-worker/backend.cjs|thumbnail-worker/worker-contract.cjs|thumbnail-worker/prepare.cjs|thumbnail-worker/cancel.cjs|thumbnail-worker/host-binding.ps1|thumbnail-worker/launch.ps1|thumbnail-worker/validate-result.ps1|thumbnail-worker/worker-gate.ps1|thumbnail-worker/jsx/thumbnail-worker.template.jsx|index.html|panel.css|panel.js|ui-core.js|ui-animated-font.js|ui-property-sets.js|ui-editor.js|ui-media.js|ui-sync.js|ui-workspace.js|ui-library.js|ui-thumbnails.js|ui-file-lease.js|ui-theme.js|ui-audio.js|ui-audio-export.js|preview.js|preview-audio-source.js|preview-audio-preparer.js|CSXS/manifest.xml|jsx/engine.jsx|jsx/json-engine.jsx|jsx/presets.jsx|jsx/timeline-engine.jsx|jsx/animated-font-model.jsx|jsx/animated-font-engine.jsx|jsx/font-pack-engine.jsx|library/fonts/index.json|library/fonts/contentrium-grid.cfont.json|library/fonts/LICENSE.txt|library/fonts/contentrium-grid.webm|jsx/overlay-engine.jsx|jsx/audio-engine.jsx|jsx/precomp-engine.jsx|jsx/texture-engine.jsx|jsx/tools-engine.jsx|jsx/sequence-engine.jsx|jsx/workspace-engine.jsx|jsx/user-preset-engine.jsx|jsx/property-set-engine.jsx|jsx/color-engine.jsx|jsx/palette-engine.jsx|jsx/thumbnail-engine.jsx|library/catalog.json|library/preview-profiles.json|library/preview-media.json|assets/icon.svg|assets/preview-before.png|assets/preview-after.png|assets/preview-logo.png|assets/audio/contentrium-generated-whoosh.wav|assets/audio/contentrium-generated-pop.wav|assets/audio/contentrium-generated-impact.wav|assets/audio/contentrium-generated-digital.wav|ui-preset-packs.js|preset-packs/manager.cjs|preset-packs/zip-worker.ps1";
         const string RequiredPanelViews = "browse|edit|alt2|alt3|alt4|easing|keyframes|anchor|shifter";
         static void ValidatePayload(string payload, string expectedVersion = null, bool requireCurrentContract = true) {
             string manifest = Path.Combine(payload, @"CSXS\manifest.xml");
@@ -270,7 +271,11 @@ namespace ContentriumPreset {
                     foreach (string relative in RequiredPayloadPaths.Split('|'))
                         if (!File.Exists(Path.Combine(payload, relative.Replace('/', Path.DirectorySeparatorChar))))
                             throw new InvalidDataException("Required public file missing: " + relative);
-                    var catalog = new JavaScriptSerializer().Deserialize<System.Collections.Generic.Dictionary<string, object>>(File.ReadAllText(Path.Combine(payload, "library/catalog.json"), System.Text.Encoding.UTF8));
+                    string catalogFile = Path.Combine(payload, "library/catalog.json");
+                    if (new FileInfo(catalogFile).Length > MaxCatalogBytes)
+                        throw new InvalidDataException("Preset catalog exceeds the supported size limit.");
+                    var catalogParser = new JavaScriptSerializer { MaxJsonLength = MaxCatalogBytes };
+                    var catalog = catalogParser.Deserialize<System.Collections.Generic.Dictionary<string, object>>(File.ReadAllText(catalogFile, System.Text.Encoding.UTF8));
                     if (catalog == null || !catalog.ContainsKey("product") || !catalog.ContainsKey("version") ||
                         Convert.ToString(catalog["product"]) != Product || Convert.ToString(catalog["version"]) != version)
                         throw new InvalidDataException("Catalog product and release version must match.");

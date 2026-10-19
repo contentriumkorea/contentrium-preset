@@ -168,11 +168,14 @@
       activeTask = null,
       nextId = 0,
       lastCompletion = null,
+      suspension = null,
       observerError = null;
     function diagnostics() {
       return {
         busy: active || queue.length > 0,
         waitingLate: late,
+        suspended: !!suspension,
+        suspension: suspension ? Object.assign({}, suspension) : null,
         queueLength: queue.length,
         pending: activeTask ? {
           requestId: activeTask.id, method: activeTask.method,
@@ -189,8 +192,14 @@
       catch(error) { observerError={callback:name,message:error.message||String(error)}; }
     }
     function changed() { notify('onChange',[diagnostics()]); }
+    function pausedError() {
+      var error = new Error('AE 대화상자를 닫은 뒤 패널을 새로고침하세요. 이전 요청은 자동으로 다시 실행하지 않습니다.');
+      error.code = 'CEP_TRANSPORT_PAUSED';
+      error.notDispatched = true;
+      return error;
+    }
     function dispatch() {
-      if (active || !queue.length) return;
+      if (suspension || active || !queue.length) return;
       active = true;
       var task = queue.shift(),
         settled = false,
@@ -213,6 +222,10 @@
         if (returned) return;
         returned = true;
         clearTimeout(timer);
+        if (error && error.stopHostDispatch === true) {
+          suspension = {requestId:task.id,method:task.method,errorCode:error.code || null};
+          while (queue.length) queue.shift().reject(pausedError());
+        }
         active = false;
         late = false;
         activeTask = null;
@@ -235,6 +248,7 @@
     }
     function request(method, payload, requestOptions) {
       return new Promise(function (resolve, reject) {
+        if (suspension) { reject(pausedError()); return; }
         if (late && !(requestOptions && requestOptions.waitForLate === true)) {
           reject(new Error('이전 AE 작업의 응답을 기다리고 있습니다. 응답 후 다시 시도하세요.'));
           return;
@@ -249,6 +263,12 @@
     };
     request.isWaitingLate = function () {
       return late;
+    };
+    request.isSuspended = function () { return !!suspension; };
+    request.resumeAfterHostDialog = function () {
+      if (active || late || queue.length) throw new Error('이전 AE 요청의 응답을 기다리고 있습니다.');
+      suspension = null;
+      changed();
     };
     request.getDiagnostics = diagnostics;
     return request;

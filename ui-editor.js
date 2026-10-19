@@ -317,13 +317,15 @@
             });
           next[index] = result.value;
         }
-        return {
+        var resultPayload = {
           id: control.id,
           value: next,
           relative: result.relative,
           undoGroupId: group,
           context: core.contextPayload(state),
         };
+        if(control.requiresRevision)resultPayload.expectedRevision=state&&state.projectRevision;
+        return resultPayload;
       }
       function commit(text, group) {
         if (displayError || input.disabled) return Promise.resolve();

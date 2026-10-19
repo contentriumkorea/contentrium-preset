@@ -27,6 +27,10 @@
     if (!value || !Array.isArray(value.favorites)) return null;
     return {favorites:value.favorites.slice(),labels:Object.assign({},value.labels||{})};
   }
+  function retainCatalogFavorites(saved,entries){
+    // A temporarily absent pack must not erase its saved favorites.
+    return Array.isArray(saved)?saved.filter(function(id){return typeof id==='string'&&id.length>0&&id.length<=256;}):entries.filter(function(e){return e.favorite!==false;}).map(function(e){return e.id;});
+  }
   function normalizeCatalog(value) {
     var entries = Array.isArray(value) ? value : value && value.entries;
     if (!Array.isArray(entries)) throw new Error('프리셋 목록의 entries 배열이 필요합니다.');
@@ -50,6 +54,59 @@
         }),
       });
     });
+  }
+  function readConvertedCatalog(appData,fsApi,pathApi){
+    if(typeof appData!=='string'||!appData||!fsApi||!pathApi)return null;
+    var presetRoot=pathApi.join(appData,'Contentrium','Preset'),root=pathApi.join(presetRoot,'ConvertedLibrary'),file=pathApi.join(root,'catalog.json');
+    if(fsApi.existsSync(pathApi.join(presetRoot,'ConvertedLibrary.location.json'))||!fsApi.existsSync(file)){
+      var locationFile=pathApi.join(presetRoot,'ConvertedLibrary.location.json');
+      if(!fsApi.existsSync(locationFile))return null;
+      var location=JSON.parse(fsApi.readFileSync(locationFile,'utf8').replace(/^\uFEFF/,''));
+      if(!location||location.schemaVersion!==1||location.product!=='Contentrium Preset'||typeof location.libraryRoot!=='string'||!location.libraryRoot)throw new Error('사용자 변환 라이브러리 위치 파일이 올바르지 않습니다.');
+      root=pathApi.resolve(location.libraryRoot);file=pathApi.join(root,'catalog.json');
+      if(!fsApi.existsSync(file))throw new Error('위치 파일에 등록된 변환 라이브러리를 찾을 수 없습니다.');
+    }
+    var catalog=JSON.parse(fsApi.readFileSync(file,'utf8').replace(/^\uFEFF/,''));
+    if(!catalog||catalog.product!=='Contentrium Preset'||catalog.schemaVersion!==1||!Array.isArray(catalog.entries))throw new Error('사용자 변환 라이브러리 카탈로그 형식이 올바르지 않습니다.');
+    catalog.entries.forEach(function(entry){(entry.variants||[]).forEach(function(variant){if(variant&&typeof variant.recipe==='string'&&variant.exactApplyVerified!==true){variant.available=false;variant.availabilityReason='exact-graph-runtime-not-integrated';if(/^cpr_[a-f0-9]{24}$/.test(String(variant.id))&&fsApi.existsSync(pathApi.join(root,'previews',variant.id+'.webm')))variant.renderedPreview='contentrium-library://'+variant.id;}});});
+    return{catalog:catalog,root:root,file:file};
+  }
+  function availabilityText(variant){return variant&&variant.recipe&&variant.availabilityReason==='exact-graph-runtime-not-integrated'?'레시피 연결됨 · 적용 엔진 연결 중':'애니메이션 준비 중';}
+  function attachOperationCapabilities(entries,host){
+    var by=host&&host.applyOptions&&host.applyOptions.byVariant||{},changed=0;
+    entries.forEach(function(entry){(entry.variants||[]).forEach(function(v){
+      if(!v.recipe)return;var caps=by[v.id],before=JSON.stringify([v.available,v.applyRuntime,v.applyDirections,v.applyTarget]);
+      v.available=false;delete v.applyRuntime;delete v.applyTarget;delete v.applyDirections;v.availabilityReason='exact-graph-runtime-not-integrated';
+      if(/^cpr_[a-f0-9]{24}$/.test(v.id)&&v.type===1&&v.recipe==='recipes/'+v.id+'.cpr.json'&&caps&&caps.runtime==='operations-v1'&&caps.available===true&&(!caps.layerKind||caps.layerKind==='av'||caps.layerKind==='text')&&Array.isArray(caps.directions)&&caps.directions.length===1&&caps.directions[0]==='both'){
+        v.available=true;v.applyRuntime=caps.runtime;v.applyTarget=caps.layerKind||'av';v.applyDirections=['both'];v.availabilityReason=v.applyTarget==='text'?'native-character-context-accepted':'native-property-accepted';
+      }
+      if(before!==JSON.stringify([v.available,v.applyRuntime,v.applyDirections,v.applyTarget]))changed++;
+    });});return changed;
+  }
+  function mapCatalogIds(previousEntries,nextEntries){
+    var ids={groups:{},variants:{}},seenGroups={},seenVariants={};
+    if(!Array.isArray(previousEntries)||!Array.isArray(nextEntries)||previousEntries.length!==nextEntries.length)return ids;
+    for(var i=0;i<previousEntries.length;i++){
+      var a=previousEntries[i],b=nextEntries[i];
+      if(!a||!b||a.name!==b.name||!Array.isArray(a.category)||!Array.isArray(b.category)||a.category.length!==b.category.length||a.category.some(function(value,index){return value!==b.category[index];})||!Array.isArray(a.variants)||!Array.isArray(b.variants)||a.variants.length!==b.variants.length)return{groups:{},variants:{}};
+      if(typeof a.id!=='string'||typeof b.id!=='string'||Object.prototype.hasOwnProperty.call(seenGroups,'$'+a.id))return{groups:{},variants:{}};
+      seenGroups['$'+a.id]=true;
+      ids.groups[a.id]=b.id;
+      for(var j=0;j<a.variants.length;j++){
+        var av=a.variants[j],bv=b.variants[j];
+        if(!av||!bv||av.name!==bv.name||Number(av.type)!==Number(bv.type)||typeof av.id!=='string'||typeof bv.id!=='string'||Object.prototype.hasOwnProperty.call(seenVariants,'$'+av.id))return{groups:{},variants:{}};
+        seenVariants['$'+av.id]=true;
+        ids.variants[av.id]=bv.id;
+      }
+    }
+    return ids;
+  }
+  function migrateCatalogState(state,migration){
+    state=state||{};migration=migration||{groups:{},variants:{}};
+    var groups=migration.groups||{},variants=migration.variants||{},favorites=Array.isArray(state.favorites)?state.favorites.map(function(id){return Object.prototype.hasOwnProperty.call(groups,id)?groups[id]:id;}):[],labels={},selectedVariants={};
+    Object.keys(state.labels||{}).forEach(function(id){labels[Object.prototype.hasOwnProperty.call(groups,id)?groups[id]:id]=state.labels[id];});
+    Object.keys(state.selectedVariants||{}).forEach(function(id){var value=state.selectedVariants[id];selectedVariants[Object.prototype.hasOwnProperty.call(groups,id)?groups[id]:id]=Object.prototype.hasOwnProperty.call(variants,value)?variants[value]:value;});
+    return{favorites:favorites,labels:labels,selectedId:Object.prototype.hasOwnProperty.call(groups,state.selectedId)?groups[state.selectedId]:state.selectedId,selectedVariants:selectedVariants};
   }
   function categoryKey(parts) {
     return parts.join(' / ');
@@ -137,14 +194,23 @@
     return Object.assign({},JSON.parse(JSON.stringify(payload)),{canConvertLayerTo3d:true,retryContext:JSON.parse(JSON.stringify(r))});
   }
   function parseHostResult(raw) {
+    function unproven(message) {
+      var error = new Error(message);
+      error.code = 'CEP_HOST_RESPONSE_UNPROVEN';
+      error.stopHostDispatch = true;
+      error.outcomeUnknown = true;
+      return error;
+    }
     if (!raw || raw === 'EvalScript error.')
-      throw new Error('Contentrium Preset을 읽지 못했습니다. AE에서 패널을 다시 열어주세요.');
+      throw unproven('AE 요청의 응답을 확인하지 못했습니다. AE 대화상자를 닫은 뒤 패널을 새로고침하세요.');
     var response;
     try {
       response = JSON.parse(raw);
     } catch (e) {
-      throw new Error('Contentrium Preset 응답이 올바르지 않습니다.');
+      throw unproven('AE 요청의 응답이 올바르지 않습니다. 대화상자를 닫은 뒤 패널을 새로고침하세요.');
     }
+    if (!response || typeof response !== 'object' || Array.isArray(response) || typeof response.ok !== 'boolean')
+      throw unproven('AE 요청의 실행 결과를 확인할 수 없습니다. 대화상자를 닫은 뒤 패널을 새로고침하세요.');
     if (!response || response.ok !== true) {
       var failure = new Error(
         response && response.error
@@ -235,7 +301,7 @@
       };
     });
   }
-  function selectionPayload(entries, state, direction) {
+  function selectionPayload(entries, state, direction, hostState) {
     if (['in', 'out', 'both'].indexOf(direction) === -1)
       throw new Error('지원하지 않는 적용 방향입니다.');
     var entry = entries.find(function (e) {
@@ -244,6 +310,11 @@
     if (!entry) throw new Error('프리셋을 선택하세요.');
     var variant = defaultVariant(entry, state.selectedVariants[entry.id]);
     if (variant.available !== true) throw new Error('이 변형은 애니메이션 준비 중입니다.');
+    if(variant.applyDirections&&variant.applyDirections.indexOf(direction)===-1)throw new Error('이 방향의 적용은 아직 정밀 검증되지 않았습니다.');
+    if(variant.applyRuntime==='operations-v1'){
+      if(!hostState||!core.contextPayload(hostState)||!Number.isFinite(hostState.projectRevision))throw new Error('현재 프로젝트 선택 상태를 새로고침한 뒤 적용하세요.');
+      return{variantId:variant.id,direction:direction,context:core.contextPayload(hostState),expectedRevision:hostState.projectRevision};
+    }
     return { variantId: variant.id, direction: direction };
   }
   function normalizeControlType(control) {
@@ -312,14 +383,20 @@
     if(entry&&entry.source==='library')return JSON.stringify([entry.id,entry.name,entry.libraryItem,entry.availabilityReason,!!busy,!!connected,state&&state.numSelectedLayers,state&&state.precompApplyOptions,state&&state.soundApplyOptions]);
     var caps=(hostInfo&&hostInfo.applyOptions&&hostInfo.applyOptions.byVariant&&variant&&hostInfo.applyOptions.byVariant[variant.id])||{},
       canReplace=footerCanReplace(caps,state);
-    return JSON.stringify([entry&&entry.id,entry&&entry.name,variant&&variant.id,variant&&variant.name,variant&&variantType(variant),variant&&variant.available===true,!!busy,!!connected,caps.hasInOutAnims===true,caps.containsAudio===true,canReplace,caps.canApplyTexture===true]);
+    return JSON.stringify([entry&&entry.id,entry&&entry.name,variant&&variant.id,variant&&variant.name,variant&&variantType(variant),variant&&variant.available===true,variant&&variant.applyDirections,!!busy,!!connected,caps.hasInOutAnims===true,caps.containsAudio===true,canReplace,caps.canApplyTexture===true]);
   }
   var api = {
     normalizeCatalog: normalizeCatalog,
+    readConvertedCatalog:readConvertedCatalog,
+    attachOperationCapabilities:attachOperationCapabilities,
+    availabilityText:availabilityText,
+    mapCatalogIds:mapCatalogIds,
+    migrateCatalogState:migrateCatalogState,
     footerSignature:footerSignature,
     buildCategoryTree: buildCategoryTree,
     gridWindow:gridWindow,
     filterEntries: filterEntries,
+    retainCatalogFavorites: retainCatalogFavorites,
     resolvePreview: resolvePreview,
     hostScript: hostScript,
     parseHostResult: parseHostResult,
@@ -350,6 +427,8 @@
       hadUIPreferences = false,
       welcomeScheduled = false,
       builtInEntries = [],
+      convertedLibraryRoot = null,
+      catalogIdMigration = {},
       fontEntries = [],
       personalEntries = [],
       libraryPaths = [],
@@ -444,7 +523,9 @@
       else delete $('status').dataset.transportRequestId;
     }
     transportChanged = function () {
-      $('connection').dataset.transport=JSON.stringify(getTransportState());
+      var transportState=getTransportState();
+      $('connection').dataset.transport=JSON.stringify(transportState);
+      if(transportState.suspended){connected=false;$('connection').textContent='AE · Paused';$('connection').classList.remove('online');renderFooter();}
       if(animatedFontUI)animatedFontUI.updateState({busy:busy||!!(hostQueue&&hostQueue.isBusy()),connected:connected});
     };
     transportObserver = function (waiting, detail) {
@@ -1226,7 +1307,7 @@
             if (scope.ContentriumPreview) scope.ContentriumPreview.mount(wrap, entry, variant);
             else wrap.appendChild(element('span', 'preview-message', 'Preview unavailable'));
           }
-          if (variant.available !== true) wrap.appendChild(element('span', 'preview-badge', entry.source==='library'?'사용 불가':'준비 중'));
+          if (variant.available !== true) wrap.appendChild(element('span', 'preview-badge', entry.source==='library'?'사용 불가':availabilityText(variant)));
           card.insertBefore(wrap, card.firstChild);
           card._previewKey = previewKey;
         }
@@ -1400,7 +1481,7 @@
             item.dataset.variantId = v.id;
             item.setAttribute('aria-label', v.name || v.id);
             item.setAttribute('aria-pressed', String(v.id === variant.id));
-            if (v.available !== true) item.appendChild(element('span', 'variant-state', '준비 중'));
+            if (v.available !== true) item.appendChild(element('span', 'variant-state', availabilityText(v)));
             item.onclick = function (event) {
               event.stopPropagation();
               lastCardClick = null;
@@ -1469,7 +1550,7 @@
       });
       $('selection-label').textContent = entry ? entry.name : '프리셋을 선택하세요.';
       $('variant-summary').textContent = variant
-        ? (variant.name || '') + (variant.available === true ? '' : ' · 애니메이션 준비 중')
+        ? (variant.name || '') + (variant.available === true ? '' : ' · ' + availabilityText(variant))
         : '';
       if (!variant) return;
       if(fontDefinition){$('variant-summary').textContent=fontDefinition.name||'사용할 수 없는 애니메이션 글자 스타일';return;}
@@ -1578,10 +1659,11 @@
         : [['Apply', 'both']]
       ).forEach(function (pair) {
         var button = element('button', 'apply-button', pair[0]);
-        button.disabled = busy || variant.available !== true;
+        var directionAccepted=!variant.applyDirections||variant.applyDirections.indexOf(pair[1])!==-1;
+        button.disabled = busy || variant.available !== true || !directionAccepted;
         button.title =
           variant.available === true
-            ? '선택 레이어에 프리셋 적용'
+            ? (directionAccepted?'선택 레이어에 프리셋 적용':'이 방향은 아직 정밀 검증되지 않았습니다.')
             : '이 변형은 애니메이션 준비 중입니다.';
         button.onclick = function () {
           apply(pair[1]);
@@ -1616,7 +1698,7 @@
       if(activeEntry()&&activeEntry().source==='library'){applyLibrary(false);return;}
       var payload;
       try {
-        payload = selectionPayload(entries, selectionState(), direction);
+        payload = selectionPayload(entries, selectionState(), direction, layerState);
         if(payload.variantId==='1b8'){if(!layerState||!core.contextPayload(layerState)||!Number.isFinite(layerState.projectRevision))throw new Error('현재 프로젝트 선택 상태를 새로고침한 뒤 적용하세요.');payload.context=core.contextPayload(layerState);payload.expectedRevision=layerState.projectRevision;}
         if (variantType(activeVariant()) === 10) {
           payload.options = Object.assign({}, precompOptions, extra || {});
@@ -1770,6 +1852,7 @@
       return callHost('hostStatus', {})
         .then(function (result) {
           hostInfo = result;
+          if(attachOperationCapabilities(builtInEntries,result))renderGrid();
           lastRevision = null;
           connected = !!result && result.available !== false;
           receiveFonts(result&&result.animatedFonts);
@@ -1821,45 +1904,50 @@
         });
     }
     function loadCatalog() {
-      return fetch('./library/catalog.json', { cache: 'no-store' })
+      var nodeRequire=typeof require==='function'?require:scope.cep_node&&scope.cep_node.require,catalogPromise=null;
+      catalogIdMigration={};
+      if(scope.__adobe_cep__&&nodeRequire){
+        try{
+          var processApi=nodeRequire('process'),pathApi=nodeRequire('path'),fsApi=nodeRequire('fs'),appData=processApi.env&&processApi.env.APPDATA;
+          if(!appData)appData=pathApi.join(nodeRequire('os').homedir(),'AppData','Roaming');
+          var converted=readConvertedCatalog(appData,fsApi,pathApi);
+          if(converted){
+            convertedLibraryRoot=converted.root;
+            if(scope.ContentriumPreview&&scope.ContentriumPreview.setConvertedLibraryRoot)scope.ContentriumPreview.setConvertedLibraryRoot(convertedLibraryRoot);
+            try{var extensionRoot=decodeURI(scope.__adobe_cep__.getSystemPath('extension'));if(/^file:/i.test(extensionRoot))extensionRoot=nodeRequire('url').fileURLToPath(extensionRoot);var previousFile=pathApi.join(extensionRoot,'library','catalog.json');if(fsApi.existsSync(previousFile)){var previousCatalog=JSON.parse(fsApi.readFileSync(previousFile,'utf8').replace(/^\uFEFF/,''));catalogIdMigration=mapCatalogIds(previousCatalog.entries,converted.catalog.entries);}}catch(ignoreCatalogMigration){}
+            catalogPromise=Promise.resolve(converted.catalog);
+          }
+        }catch(convertedLoadError){catalogPromise=Promise.reject(convertedLoadError);}
+      }
+      if(!catalogPromise)catalogPromise=fetch('./library/catalog.json', { cache: 'no-store' })
         .then(function (response) {
-          if (!response.ok)
-            throw new Error('라이브러리 목록을 읽지 못했습니다: ' + response.status);
+          if (!response.ok) throw new Error('라이브러리 목록을 읽지 못했습니다: ' + response.status);
           return response.json();
         })
         .catch(function (error) {
-          var nodeRequire =
-            typeof require === 'function' ? require : scope.cep_node && scope.cep_node.require;
           if (!scope.__adobe_cep__ || !nodeRequire) throw error;
           var root = decodeURI(scope.__adobe_cep__.getSystemPath('extension'));
           if (/^file:/i.test(root)) root = nodeRequire('url').fileURLToPath(root);
-          return JSON.parse(
-            nodeRequire('fs')
-              .readFileSync(nodeRequire('path').join(root, 'library', 'catalog.json'), 'utf8')
-              .replace(/^\uFEFF/, ''),
-          );
-        })
-        .then(function (catalog) {
+          return JSON.parse(nodeRequire('fs').readFileSync(nodeRequire('path').join(root, 'library', 'catalog.json'), 'utf8').replace(/^\uFEFF/, ''));
+        });
+      return catalogPromise.then(function (catalog) {
           builtInEntries = normalizeCatalog(catalog);
+          attachOperationCapabilities(builtInEntries,hostInfo);
           entries = builtInEntries.concat(fontEntries,personalEntries);
+          if(Object.keys(catalogIdMigration.groups||{}).length||Object.keys(catalogIdMigration.variants||{}).length){
+            var migratedState=migrateCatalogState({favorites:persisted.favorites,labels:persisted.labels,selectedId:selectedId,selectedVariants:persisted.selectedVariants},catalogIdMigration);
+            if(Array.isArray(persisted.favorites))persisted.favorites=migratedState.favorites;
+            persisted.labels=migratedState.labels;labels=migratedState.labels;
+            persisted.selectedVariants=migratedState.selectedVariants;selectedVariants=migratedState.selectedVariants;
+            selectedId=migratedState.selectedId;
+            if(defaultBrowseState){var browseState=migrateCatalogState(defaultBrowseState,catalogIdMigration);defaultBrowseState.selectedId=browseState.selectedId;defaultBrowseState.selectedVariants=browseState.selectedVariants;}
+          }
           var valid = new Set(
             entries.map(function (e) {
               return e.id;
             }),
           );
-          favorites = new Set(
-            Array.isArray(persisted.favorites)
-              ? persisted.favorites.filter(function (id) {
-                  return valid.has(id) || (typeof id==='string'&&(id.indexOf('library:')===0||id.indexOf('font:')===0));
-                })
-              : builtInEntries
-                  .filter(function (e) {
-                    return e.favorite !== false;
-                  })
-                  .map(function (e) {
-                    return e.id;
-                  }),
-          );
+          favorites = new Set(retainCatalogFavorites(persisted.favorites,builtInEntries));
           sharedRevision++;
           expanded = new Set(
             Array.isArray(persisted.expanded)
@@ -1979,6 +2067,7 @@
     document.addEventListener('contextmenu', function () { lastCardClick = null; }, true);
     $('refresh').onclick = function () {
       if(hostQueue&&hostQueue.isWaitingLate()){status('이전 AE 작업의 응답을 기다리고 있습니다.','error');return;}
+      if(hostQueue&&hostQueue.isSuspended())hostQueue.resumeAfterHostDialog();
       persisted = {
         favorites: Array.from(favorites),
         expanded: Array.from(expanded),
@@ -2107,6 +2196,7 @@
       onLibrary: receiveLibrary,
     });
     workspaceUI.init();
+    if(scope.ContentriumPresetPacks)scope.ContentriumPresetPacks.mount($('preset-pack-open'));
     if(helperTool){document.body.classList.add('helper-window');document.body.dataset.tool=helperTool;selectTab('tools',true);}
     document.addEventListener('focusout', function (event) {
       if (event.target.closest && event.target.closest('#editor-controls'))
@@ -2424,7 +2514,7 @@
     renderEditor();
     connectHost();
     setInterval(function () {
-      if (connected && !busy && !(hostQueue && hostQueue.isBusy())) refreshState();
+      if (connected && !busy && !(hostQueue && (hostQueue.isBusy() || hostQueue.isSuspended()))) refreshState();
     }, 750);
   }
 })(typeof window === 'undefined' ? globalThis : window);

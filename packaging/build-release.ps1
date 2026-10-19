@@ -2,7 +2,7 @@
 param(
     [string]$PayloadRoot,
     [string]$Output,
-    [ValidatePattern('^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$')][string]$Version = '1.2.0',
+    [ValidatePattern('^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$')][string]$Version = '1.3.0',
     [switch]$ValidateOnly
 )
 $ErrorActionPreference = 'Stop'
@@ -57,12 +57,12 @@ $stage = Join-Path ([IO.Path]::GetTempPath()) ('ContentriumPreset-Package-' + [g
 try {
     $extension = Join-Path $stage 'com.contentrium.preset'
     [IO.Directory]::CreateDirectory($extension) | Out-Null
-    foreach ($name in @('index.html','panel.css','panel.js','ui-core.js','ui-animated-font.js','ui-property-sets.js','ui-editor.js','ui-media.js','ui-sync.js','ui-workspace.js','ui-library.js','ui-thumbnails.js','ui-thumbnail-worker.js','ui-file-lease.js','ui-theme.js','ui-audio.js','ui-audio-export.js','preview.js','preview-audio-source.js','preview-audio-preparer.js')) {
+    foreach ($name in @('ui-preset-packs.js','index.html','panel.css','panel.js','ui-core.js','ui-animated-font.js','ui-property-sets.js','ui-editor.js','ui-media.js','ui-sync.js','ui-workspace.js','ui-library.js','ui-thumbnails.js','ui-thumbnail-worker.js','ui-file-lease.js','ui-theme.js','ui-audio.js','ui-audio-export.js','preview.js','preview-audio-source.js','preview-audio-preparer.js')) {
         $source = Join-Path $payload $name
         if (-not (Test-Path -LiteralPath $source -PathType Leaf)) { throw "Required public file missing: $name" }
         Copy-Item -LiteralPath $source -Destination $extension
     }
-    foreach ($name in @('CSXS','jsx','library','assets','thumbnail-worker')) {
+    foreach ($name in @('CSXS','jsx','library','assets','thumbnail-worker','preset-packs')) {
         $source = Join-Path $payload $name
         if (Test-Path -LiteralPath $source -PathType Container) {
             $links = Get-ChildItem -LiteralPath $source -Recurse -Force | Where-Object { $_.Attributes -band [IO.FileAttributes]::ReparsePoint }
@@ -76,7 +76,7 @@ try {
     if (Test-Path -LiteralPath (Join-Path $project 'LICENSE') -PathType Leaf) { Copy-Item -LiteralPath (Join-Path $project 'LICENSE') -Destination $stage }
     [IO.Directory]::CreateDirectory((Join-Path $stage 'docs')) | Out-Null
     Copy-Item -LiteralPath (Join-Path $project 'docs\user-guide.md') -Destination (Join-Path $stage 'docs')
-    foreach ($name in @('browse.png','verification.md')) {
+    foreach ($name in @('verification.md','cover.svg','download-setup.svg','download-portable.svg','pack-flow.svg','home.svg')) {
         $document = Join-Path $project ('docs\' + $name)
         if (Test-Path -LiteralPath $document -PathType Leaf) { Copy-Item -LiteralPath $document -Destination (Join-Path $stage 'docs') }
     }

@@ -1,22 +1,26 @@
 (function () {
  try{(function () {
- var root=File($.fileName).parent.parent.fsName;
+ var root=File($.fileName).parent.parent.fsName,libraryRoot=root+'/library';$.cpPresetRoot=root;
  function array(v){return Object.prototype.toString.call(v)==='[object Array]';}
  function quote(s){return '"'+String(s).replace(/[\\"\x00-\x1f]/g,function(c){var m={'"':'\\"','\\':'\\\\','\n':'\\n','\r':'\\r','\t':'\\t'};return m[c]||'\\u'+('0000'+c.charCodeAt(0).toString(16)).slice(-4);})+'"';}
  function json(v){if(v===null||typeof v==='undefined')return 'null';if(typeof v==='string')return quote(v);if(typeof v==='number')return isFinite(v)?String(v):'null';if(typeof v==='boolean')return String(v);var a=[],i,k;if(array(v)){for(i=0;i<v.length;i++)a.push(json(v[i]));return '['+a.join(',')+']';}for(k in v)if(v.hasOwnProperty(k)&&typeof v[k]!=='function')a.push(quote(k)+':'+json(v[k]));return '{'+a.join(',')+'}';}
  function parse(s){if(!$.cpJson)fail('JSON_ENGINE_REQUIRED','JSON 모듈이 설치되지 않았습니다.');return $.cpJson.parse(s);}
  function clone(v){return parse(json(v));}
+ // Operation controls keep native binary64 values through reset, drag and Undo.
+ function operationClone(v){var out,i,k;if(array(v)){out=[];for(i=0;i<v.length;i++)out.push(operationClone(v[i]));return out;}if(v&&typeof v==='object'){out={};for(k in v)if(Object.prototype.hasOwnProperty.call(v,k))out[k]=operationClone(v[k]);return out;}return v;}
+ function operationEqual(a,b){if(array(a)||array(b)){if(!array(a)||!array(b)||a.length!==b.length)return false;for(var i=0;i<a.length;i++)if(!operationEqual(a[i],b[i]))return false;return true;}return a===b&&(a!==0||1/a===1/b);}
  function fail(code,message){var e=new Error(message);e.code=code;throw e;}
  function hash(s){var n=0;for(var i=0;i<s.length;i++)n=((n<<5)-n+s.charCodeAt(i))|0;return String(n);}
  function load(name,optional){var f=new File(root+'/jsx/'+name+'.jsx');if(!f.exists){if(optional)return;fail('INSTALLATION_INCOMPLETE','설치 파일이 없습니다: '+name);}$.evalFile(f);}
- function readCatalog(){var f=new File(root+'/library/catalog.json');f.encoding='UTF-8';if(!f.open('r'))fail('CATALOG_UNAVAILABLE','프리셋 목록을 읽을 수 없습니다.');var s=f.read();f.close();return parse(s);}
- load('json-engine');load('presets');load('timeline-engine');load('animated-font-model');load('animated-font-engine');load('font-pack-engine');delete $.cpController;load('controller-engine',true);load('overlay-engine');load('audio-engine');load('precomp-engine');load('texture-engine');load('tools-engine');load('sequence-engine');load('workspace-engine');load('user-preset-engine');load('property-set-engine');load('color-engine');load('palette-engine');load('thumbnail-engine');
+ function readCatalog(){var userRoot=null,convertedRoot=null,locationFile=null,location=null,f=null,s,value,i,j,e,v;try{if(typeof Folder!=='undefined'&&Folder.userData&&Folder.userData.fsName)userRoot=Folder.userData.fsName+'/Contentrium/Preset';}catch(ignoreUserDataRoot){}if(userRoot){convertedRoot=userRoot+'/ConvertedLibrary';f=new File(convertedRoot+'/catalog.json');if((new File(userRoot+'/ConvertedLibrary.location.json')).exists||!f.exists){locationFile=new File(userRoot+'/ConvertedLibrary.location.json');if(locationFile.exists){locationFile.encoding='UTF-8';if(!locationFile.open('r'))fail('LIBRARY_LOCATION_UNAVAILABLE','사용자 변환 라이브러리 위치 파일을 읽을 수 없습니다.');s=locationFile.read();locationFile.close();location=parse(s);if(!location||location.schemaVersion!==1||location.product!=='Contentrium Preset'||typeof location.libraryRoot!=='string'||!location.libraryRoot)fail('LIBRARY_LOCATION_INVALID','사용자 변환 라이브러리 위치 파일이 올바르지 않습니다.');convertedRoot=location.libraryRoot;f=new File(convertedRoot+'/catalog.json');if(!f.exists)fail('CONVERTED_LIBRARY_MISSING','위치 파일에 등록된 변환 라이브러리를 찾을 수 없습니다.');}}if(f.exists){f.encoding='UTF-8';if(!f.open('r'))fail('CATALOG_UNAVAILABLE','사용자 변환 라이브러리 목록을 읽을 수 없습니다.');s=f.read();f.close();value=parse(s);if(!value||value.product!=='Contentrium Preset'||value.schemaVersion!==1||!array(value.entries))fail('CATALOG_INVALID','사용자 변환 라이브러리 목록 형식이 올바르지 않습니다.');libraryRoot=convertedRoot;for(i=0;i<value.entries.length;i++){e=value.entries[i];for(j=0;j<(e.variants||[]).length;j++){v=e.variants[j];if(v&&typeof v.recipe==='string'&&v.exactApplyVerified!==true){v.available=false;v.availabilityReason='exact-graph-runtime-not-integrated';}}}return value;}}f=new File(root+'/library/catalog.json');f.encoding='UTF-8';if(!f.open('r'))fail('CATALOG_UNAVAILABLE','프리셋 목록을 읽을 수 없습니다.');s=f.read();f.close();return parse(s);}
+ load('json-engine');load('presets');load('timeline-engine');load('animated-font-model');load('animated-font-engine');load('font-pack-engine');load('operation-engine');load('text-operation-engine');load('operation-model');load('operation-library');delete $.cpController;load('controller-engine',true);load('overlay-engine');load('audio-engine');load('precomp-engine');load('texture-engine');load('tools-engine');load('sequence-engine');load('workspace-engine');load('user-preset-engine');load('property-set-engine');load('color-engine');load('palette-engine');load('thumbnail-engine');
  // Authored packs contain validated vector data and exact content identities.
  $.cpFontPacks.configure({root:root,userRoot:String($.cpAudio.root).replace(/[\\\/]UserAudio[\\\/]?$/,'')+'/AnimatedFonts'});
  $.cpGlyph.configure({resolvePack:$.cpFontPacks.resolve});
  $.cpWorkspace.configure({json:json,parse:parse});
  if($.cpPropertySets)$.cpPropertySets.configure({json:json,parse:parse,load:$.cpWorkspace.loadPropertySets,save:$.cpWorkspace.savePropertySets});
- var catalog=readCatalog(),session=$.cpFacadeSession||{clipboard:[],propertyClipboard:null,gestures:{},imports:{}},targetMap={};
+ var catalog=readCatalog(),session=$.cpFacadeSession||{clipboard:[],propertyClipboard:null,gestures:{},imports:{}},targetMap={};$.cpPresetLibraryRoot=libraryRoot;if($.cpPrecomp.configureCatalog)$.cpPrecomp.configureCatalog(catalog);
+ $.cpOperationLibrary.configure({root:root,libraryRoot:libraryRoot,catalog:catalog});
  $.cpFacadeSession=session;
  session.conversionRequests=session.conversionRequests||[];session.conversionSerial=session.conversionSerial||0;
  var methods=['hostStatus','getState','applyPreset','setControl','removePreset','presetAction','propertyAction','getSettings','setSettings','getLibrary','libraryPreviewDestination','addLibraryFolder','removeLibraryFolder','importLibraryItem','replaceLibraryItem','prepareAudioImport','saveLibraryPreset','describeLibraryPreset','removeLibraryItem','toolAction','endUndoGroup','enumerateFonts'];
@@ -63,7 +67,7 @@
    }throw error;
   }return result;
  }
- function applyOptions(){var by={},i,j,v,m;for(i=0;i<catalog.entries.length;i++)for(j=0;j<catalog.entries[i].variants.length;j++){v=catalog.entries[i].variants[j];if(v.type!==10)continue;m=null;try{if($.cpPrecomp.nativeModel)m=$.cpPrecomp.nativeModel(v.id);}catch(ignore){}by[v.id]={hasInOutAnims:!!(v.generator&&v.generator.kind!=='camera'),containsAudio:!!(m&&m.audio&&m.audio.length),canReplace:true,canApplyTexture:false};}return{byVariant:by};}
+ function applyOptions(){var by={},i,j,v,m,g,generic,traits;for(i=0;i<catalog.entries.length;i++)for(j=0;j<catalog.entries[i].variants.length;j++){v=catalog.entries[i].variants[j];g=v.generator||{};traits=v.sourceTraits||{};if(v.applyRuntime==='operations-v1'){by[v.id]={runtime:'operations-v1',available:v.available===true,directions:v.applyDirections,layerKind:v.applyTarget};continue;}if(v.type!==10&&!(v.type===11&&g.kind==='precomp'))continue;generic=g.independent===true;m=null;if(!generic)try{if($.cpPrecomp.nativeModel)m=$.cpPrecomp.nativeModel(v.id);}catch(ignore){}by[v.id]={hasInOutAnims:typeof traits.hasInOutAnims==='boolean'?traits.hasInOutAnims:(generic?g.hasInOutAnims===true:!!(v.generator&&v.generator.kind!=='camera')),containsAudio:typeof traits.containsAudio==='boolean'?traits.containsAudio:(generic?g.containsAudio===true:!!(m&&m.audio&&m.audio.length)),canReplace:true,canApplyTexture:typeof traits.canBeUsedAsTexture==='boolean'?traits.canBeUsedAsTexture:(generic&&g.canBeUsedAsTexture===true)};}return{byVariant:by};}
  function status(){var c=app.project&&app.project.activeItem;return{version:app.version,hasComposition:c instanceof CompItem,selectedLayers:c instanceof CompItem?c.selectedLayers.length:0,audioRoot:$.cpAudio.root,methods:historyAvailable()?methods.concat(['undo','redo']):methods,animatedFonts:$.cpFontPacks.status(),applyOptions:applyOptions(),colorPicker:pickerCapabilities(),capabilities:{textureMedia:true,palettes:true,nativeColorPicker:pickerCapabilities().available,captureUserPreset:true,settings:true,userLibrary:true,toolAction:true,fonts:!!app.fonts,presetActions:true,propertyActions:true,multiPanel:true}};}
  function glyphGuard(options,c){if(!options.context)fail('CONTEXT_REQUIRED','현재 프로젝트와 선택 상태를 다시 확인하세요.');guard(options.context,c);if(options.expectedRevision!==undefined&&(typeof options.expectedRevision!=='number'||options.expectedRevision!==projectRevision()))fail('STALE_PROJECT','프로젝트가 변경되었습니다. 현재 상태를 확인하세요.');}
  function glyphReceipt(c,result){var layer=layerById(c,result.rootLayerId);for(var i=1;i<=c.numLayers;i++)c.layer(i).selected=false;layer.selected=true;result.addedLayerId=layer.id;result.appliedLayers=1;result.wantsRevealEditTab=true;return result;}
@@ -110,8 +114,8 @@
   var groups={},order=[],out=[],i,r,key,d,target;
   targetMap={};
   for(i=0;i<raw.length;i++){r=raw[i];key=r.mergeKey;target=r.target;delete r.mergeKey;delete r.target;
-   if(!groups[key]){d=clone(r);d.targets=[target];d.mixed=false;groups[key]=d;order.push(key);}
-   else{d=groups[key];if(json(d.value)!==json(r.value))d.mixed=true;d.targets.push(target);if(r.enabled===false){d.enabled=false;d.readOnlyReason=r.readOnlyReason||d.readOnlyReason;d.readOnlyCode=r.readOnlyCode||d.readOnlyCode;if(r.propertySetUnavailable)d.actions=[];}if(typeof r.min==='number')d.min=typeof d.min==='number'?Math.max(d.min,r.min):r.min;if(typeof r.max==='number')d.max=typeof d.max==='number'?Math.min(d.max,r.max):r.max;}
+   if(!groups[key]){d=r.requiresRevision?operationClone(r):clone(r);d.targets=[target];d.mixed=false;groups[key]=d;order.push(key);}
+   else{d=groups[key];if(r.requiresRevision?!operationEqual(d.value,r.value):json(d.value)!==json(r.value))d.mixed=true;d.targets.push(target);if(r.enabled===false){d.enabled=false;d.readOnlyReason=r.readOnlyReason||d.readOnlyReason;d.readOnlyCode=r.readOnlyCode||d.readOnlyCode;if(r.propertySetUnavailable)d.actions=[];}if(typeof r.min==='number')d.min=typeof d.min==='number'?Math.max(d.min,r.min):r.min;if(typeof r.max==='number')d.max=typeof d.max==='number'?Math.min(d.max,r.max):r.max;}
   }
   for(i=0;i<order.length;i++){d=groups[order[i]];var identity=order[i]+json(d.targets);if(d.singleRootOnly&&d.targets.length>1){d.enabled=false;d.actions=[];d.readOnlyCode='GLYPH_MULTI_EDIT_UNAVAILABLE';d.readOnlyReason='Edit one animated-font root at a time.';}if(d.semantic==='selected-layer-color'){var members=[];for(var mi=0;mi<d.targets.length;mi++)members.push(d.targets[mi].publicId);members.sort();identity='colors:'+json(members);}d.id=d.targets.length===1?d.targets[0].publicId:'multi:'+hash(identity);targetMap[d.id]=d.targets;delete d.targets;out.push(d);}return out;
  }
@@ -221,6 +225,10 @@
     for(k=0;k<expectedRoles.length;k++)if(!present[expectedRoles[k]]){var role=expectedRoles[k],missingId='missing-marker:'+layer.id+':'+instance.instanceId+':'+role;raw.push({id:missingId,name:role.toUpperCase()+' 마커 없음',type:'comment',nodeType:'effect_preset_marker_group',value:'마커가 없는 전환은 비활성화됩니다.',groupPath:[instance.name||label(instance.variantId),'Timeline'],actions:['add'],mergeKey:missingId,target:{kind:'missing-marker',layerId:layer.id,localId:role,instanceId:instance.instanceId,variantId:instance.variantId,presetKind:j<overlay.length?'overlay':'precomp',publicId:missingId}});}
    }
   }catch(error){errors.push({layerId:ls[i].id,code:error.code||'HOST_ERROR',message:String(error.message||error)});}
+  var operations=$.cpOperationModel.state(ls);
+  for(i=0;i<operations.applied.length;i++){var op=operations.applied[i];op.variantId=$.cpOperationLibrary.variantId(op.variantId)||op.variantId;applied.push(op);}
+  for(i=0;i<operations.controls.length;i++){operations.controls[i].requiresRevision=true;raw.push(operations.controls[i]);}
+  for(i=0;i<operations.errors.length;i++)errors.push(operations.errors[i]);
   ordinaryControlOccurrences(raw,applied);
   var colorWarnings=[];
   if(ls.length&&$.cpColors)try{var colors=$.cpColors.enumerate(ls,{time:c.time});colorWarnings=colors.warnings;for(i=0;i<colors.controls.length;i++){if(ownedGlyphColor(c,colors.controls[i]))continue;var color=clone(colors.controls[i]),colorId=color.id;color.groupPath=['Layer Selection','Colors'];color.enabled=color.canSet;color.actions=color.canSet?['copy','paste']:['copy'];color.mergeKey='color:'+json(color.value);color.target={kind:'color',layerId:color.layerId,localId:colorId,publicId:colorId};raw.push(color);}}catch(colorError){errors.push({code:colorError.code||'COLOR_UNAVAILABLE',message:String(colorError.message||colorError)});}
@@ -249,19 +257,41 @@
   snapshot.id='convert-3d-'+new Date().getTime()+'-'+(++session.conversionSerial);record={snapshot:clone(snapshot),consumed:false,builder:$.cpPresetBuilder.build,overlay:$.cpOverlay,apply:$.cpOverlay.apply,preflight:$.cpOverlay.preflight};session.conversionRequests.push(record);if(session.conversionRequests.length>16)session.conversionRequests.shift();var error=new Error('선택한 2D 레이어를 3D로 변환한 뒤 이 프리셋을 적용하시겠습니까?');error.code='CONFIRM_3D_CONVERSION';error.type='RetryableError';error.retryOptions={canConvertLayerTo3d:true};error.retryContext=clone(snapshot);error.mutationStarted=false;throw error;
  }
  function errorEnvelope(error){var result={code:error.code||'HOST_ERROR',message:String(error.message||error),line:error.line||0,rollbackError:error.rollbackError||null},record=error.retryContext&&conversionRecord(error.retryContext.id);if(error.code==='CONFIRM_3D_CONVERSION'&&error.type==='RetryableError'&&error.mutationStarted===false&&!error.rollbackError&&record&&!record.consumed&&json(error.retryContext)===json(record.snapshot)&&json(error.retryOptions)==='{"canConvertLayerTo3d":true}'){result.type='RetryableError';result.retryOptions={canConvertLayerTo3d:true};result.retryContext=clone(record.snapshot);result.mutationStarted=false;}return result;}
+ function applyOperation(c,targets,variant,entry,options,settings){
+  if(typeof options.expectedRevision!=='number'||!isFinite(options.expectedRevision))fail('STALE_PROJECT','현재 프로젝트 상태를 새로고침한 뒤 적용하세요.');
+  capturedRevision(options);if(!targets.length)fail('NO_SELECTED_LAYERS','프리셋을 적용할 레이어를 선택하세요.');
+  var allowed={variantId:1,direction:1,context:1,expectedRevision:1},key,i,data,backend,plans=[],receipts=[],stamp='o'+new Date().getTime().toString(36);
+  for(key in options)if(options.hasOwnProperty(key)&&!allowed[key])fail('OPERATION_OPTION_UNVERIFIED','이 적용 옵션은 아직 정밀 검증되지 않았습니다: '+key);
+  data=$.cpOperationLibrary.resolve(variant.id,options.direction||'both');
+  if((variant.applyTarget||'av')!==data.requirements.layerKind)fail('OPERATION_TARGET_CHANGED','프리셋 대상 형식이 변경되었습니다.');
+  backend=data.requirements.layerKind==='text'?$.cpTextOperations:$.cpOperations;
+  if(settings.presetMotionBlurEnabled===false)data.policies.enableMotionBlur=false;
+  for(i=0;i<targets.length;i++){
+   var layer=targets[i];if(data.requirements.layerKind==='av'&&(layer.threeDLayer||(typeof TextLayer!=='undefined'&&layer instanceof TextLayer)||(typeof ShapeLayer!=='undefined'&&layer instanceof ShapeLayer)))fail('OPERATION_TARGET_UNVERIFIED','검증된 2D 이미지·영상 레이어를 선택하세요.');
+   if($.cpOverlay.instances(layer).length||$.cpPrecomp.instances(layer).length||$.cpTexture.instances(layer).length||$.cpGlyph.instances(layer).length)fail('OPERATION_STACK_UNVERIFIED','기존 프리셋과의 중첩은 아직 정밀 검증되지 않았습니다.');
+   var plan={instanceId:stamp+'_'+i,undoGroup:false};backend.preflight(layer,data,plan);plans.push({options:plan,motionBlur:layer.motionBlur,enabled:layer.enabled});
+  }
+  guard(options.context,c);capturedRevision(options);
+  return undo(entry.name,function(){
+   try{for(i=0;i<targets.length;i++)receipts.push(backend.apply(targets[i],data,plans[i].options));}
+   catch(error){for(var r=receipts.length-1;r>=0;r--)try{backend.remove(targets[r],receipts[r].instanceId,{undoGroup:false});targets[r].motionBlur=plans[r].motionBlur;if(typeof plans[r].enabled==='boolean')targets[r].enabled=plans[r].enabled;}catch(rollback){error.rollbackError=String(rollback.message||rollback);}throw error;}
+   return{appliedLayers:targets.length,receipts:receipts,variantId:variant.id,wantsRevealEditTab:true,warnings:[],missingAudio:[]};
+  },true);
+ }
  function apply(options){
-  var raw=options;options=mergeOptions(options);var c=comp();guard(options.context,c);capturedRevision(options);var f=find(options.variantId),variant=clone(f.variant),entry=f.entry,targets=selected(c),i,receipts=[],result,settings=$.cpWorkspace.getSettings().settings;
+  var raw=options;options=mergeOptions(options);var c=comp();guard(options.context,c);capturedRevision(options);var f=find(options.variantId),variant=clone(f.variant),entry=f.entry,targets=selected(c),i,receipts=[],result,settings=$.cpWorkspace.getSettings().settings,usePrecomp=variant.type===10||(variant.type===11&&variant.generator&&variant.generator.kind==='precomp'&&variant.generator.independent===true);
   if(variant.available!==true)fail('PRESET_UNAVAILABLE','이 프리셋은 사용할 수 없습니다.');
-  if(variant.type!==10&&!targets.length)fail('NO_SELECTED_LAYERS','프리셋을 적용할 레이어를 선택하세요.');
+  if(variant.recipe){if(variant.applyRuntime!=='operations-v1')fail('PRESET_UNAVAILABLE','정확한 적용 엔진이 연결되지 않았습니다.');return applyOperation(c,targets,variant,entry,options,settings);}
+  if(!usePrecomp&&!targets.length)fail('NO_SELECTED_LAYERS','프리셋을 적용할 레이어를 선택하세요.');
   if(options.insertAsTexture)fail('TEXTURE_UNAVAILABLE','이 프리셋은 텍스처 적용을 지원하지 않습니다.');
-  var recipe=variant.type===10?null:$.cpPresetBuilder.build(variant,entry);
+  var recipe=usePrecomp?null:$.cpPresetBuilder.build(variant,entry);
   if(recipe&&recipe.text)for(i=0;i<targets.length;i++)if(!(targets[i] instanceof TextLayer))fail('TEXT_LAYER_REQUIRED','텍스트 프리셋은 텍스트 레이어에 적용해주세요.');
   if(recipe&&$.cpOverlay.preflight)for(i=0;i<targets.length;i++)$.cpOverlay.preflight(targets[i],recipe,options);
   if(options.replaceSelected)for(i=0;i<targets.length;i++)if($.cpGlyph.instances(targets[i]).length)fail('GLYPH_REPLACE_UNAVAILABLE','Animated-font instances cannot be replaced as generic precomps.');
   if(options.replaceSelected&&(targets.length!==1||!$.cpPrecomp.instances(targets[0]).length))fail('REPLACE_TARGET_REQUIRED','교체할 Contentrium 프리컴포지션 레이어 하나를 선택하세요.');
   conversionPreflight(raw,options,c,targets,recipe,settings);
   return undo(entry.name,function(){
-   if(variant.type===10){variant.title=entry.name;options.direction=options.direction||'both';options.time=c.time;options.presetMotionBlurEnabled=settings.presetMotionBlurEnabled;
+   if(usePrecomp){variant.title=entry.name;options.direction=options.direction||'both';options.time=c.time;options.presetMotionBlurEnabled=settings.presetMotionBlurEnabled;
     if(!settings.insertPrecompAfterInTransition&&variant.generator&&variant.generator.kind!=='camera'&&$.cpPrecomp.profile)options.time-= $.cpPrecomp.profile(variant.id).startOffset;
     result=options.replaceSelected?$.cpPrecomp.replace(targets[0],variant,options,root):$.cpPrecomp.apply(c,variant,options,root);targets=result.layers;
    }else for(i=0;i<targets.length;i++){receipts.push($.cpOverlay.apply(targets[i],recipe,{direction:options.direction||'both',inDuration:options.inDuration,outDuration:options.outDuration,controllerLayout:options.controllerLayout,undoGroup:false}));}
@@ -271,16 +301,19 @@
   });
  }
  function controlTargets(options){var c=comp();guard(options.context,c);var state=getState(),definition=null;for(var i=0;i<state.controls.length;i++)if(state.controls[i].id===options.id)definition=state.controls[i];if(!definition||!targetMap[options.id])fail('CONTROL_NOT_FOUND','컨트롤 또는 선택 항목이 변경되었습니다.');return{comp:c,definition:definition,targets:targetMap[options.id]};}
- function readTarget(c,t){var layer=layerById(c,t.layerId),list,i;if(t.kind==='marker'){list=$.cpTimeline.read(layer,t.instanceId);for(i=0;i<list.length;i++)if(list[i].role===t.localId)return list[i].time;}
+ function operationBackend(layer,id){var rows=$.cpOperations.instances(layer);for(var i=0;i<rows.length;i++)if(rows[i].instanceId===id)return rows[i].document.textApplication?$.cpTextOperations:$.cpOperations;fail('OPERATION_NOT_FOUND','선택한 프리셋 인스턴스가 없습니다.');}
+ function operationTarget(t){return t.kind==='operation-control'||t.kind==='operation-group'||t.kind==='operation-marker';}
+ function readTarget(c,t){var layer=layerById(c,t.layerId),list,i;if(operationTarget(t))return $.cpOperationModel.read(layer,t);if(t.kind==='marker'){list=$.cpTimeline.read(layer,t.instanceId);for(i=0;i<list.length;i++)if(list[i].role===t.localId)return list[i].time;}
   else if(t.kind==='color')return $.cpColors.get([layer],t.localId,{time:c.time}).value;
   else if(t.kind==='animated-font')return $.cpGlyph.getControl(layer,t.localId);
   else{list=t.kind==='overlay'?$.cpOverlay.controls(layer):(t.kind==='texture'?$.cpTexture.controls(layer):$.cpPrecomp.controls([layer]));for(i=0;i<list.length;i++)if(list[i].id===t.localId)return clone(list[i].value);}fail('CONTROL_NOT_FOUND','컨트롤이 변경되었습니다.');
  }
- function writeTarget(c,t,value){var layer=layerById(c,t.layerId);if(layer.locked)fail('LAYER_LOCKED','잠긴 레이어를 편집할 수 없습니다.');if(t.kind==='animated-font')return $.cpGlyph.setControl(layer,t.localId,value);if(t.kind==='color'){if(ownedGlyphColor(c,$.cpColors.get([layer],t.localId,{time:c.time})))fail('GLYPH_COLOR_ROUTE_UNAVAILABLE','Edit the owned color through its animated-font control.');return $.cpColors.set([layer],[{id:t.localId,value:value}],{time:c.time,undoGroup:false});}if(t.kind==='overlay')return $.cpOverlay.setControl(layer,t.localId,value,{undoGroup:false});if(t.kind==='texture')return $.cpTexture.setControl(layer,t.localId,value);if(t.kind==='precomp')return $.cpPrecomp.setControl(layer,t.localId,value);if(t.kind==='marker')return $.cpTimeline.set(layer,t.instanceId,t.localId,{time:value});}
+ function writeTarget(c,t,value){var layer=layerById(c,t.layerId);if(layer.locked)fail('LAYER_LOCKED','잠긴 레이어를 편집할 수 없습니다.');if(operationTarget(t))return $.cpOperationModel.write(layer,t,value);if(t.kind==='animated-font')return $.cpGlyph.setControl(layer,t.localId,value);if(t.kind==='color'){if(ownedGlyphColor(c,$.cpColors.get([layer],t.localId,{time:c.time})))fail('GLYPH_COLOR_ROUTE_UNAVAILABLE','Edit the owned color through its animated-font control.');return $.cpColors.set([layer],[{id:t.localId,value:value}],{time:c.time,undoGroup:false});}if(t.kind==='overlay')return $.cpOverlay.setControl(layer,t.localId,value,{undoGroup:false});if(t.kind==='texture')return $.cpTexture.setControl(layer,t.localId,value);if(t.kind==='precomp')return $.cpPrecomp.setControl(layer,t.localId,value);if(t.kind==='marker')return $.cpTimeline.set(layer,t.instanceId,t.localId,{time:value});}
  function sum(base,delta){if(array(base)&&array(delta)&&base.length===delta.length){var out=[];for(var i=0;i<base.length;i++)out.push(sum(base[i],delta[i]));return out;}if(typeof base==='number'&&typeof delta==='number')return base+delta;fail('RELATIVE_VALUE_UNAVAILABLE','이 속성은 상대값 입력을 지원하지 않습니다.');}
  function setControl(options){
   if(typeof options.id==='string'&&options.id.indexOf('palette:')===0)return paletteAction({action:'apply',id:options.id,value:options.value,context:options.context,expectedRevision:options.expectedRevision});
   var found=controlTargets(options),targets=found.targets,d=found.definition,c=found.comp,before=[],after=[],snapshots=[],forceWrite=false,i,gesture=options.undoGroupId,g=null,signature=json(context(c));
+  var operationWrite=false;for(i=0;i<targets.length;i++)if(operationTarget(targets[i]))operationWrite=true;
   for(i=0;i<targets.length;i++)if(targets[i].kind==='animated-font-recovery')fail('GLYPH_ACTION_UNAVAILABLE','Use the explicit marker Reset action.');
   var glyphWrite=false,glyphRevision=projectRevision();for(i=0;i<targets.length;i++)if(targets[i].kind==='animated-font')glyphWrite=true;if(glyphWrite)glyphGuard(options,c);
   if(String(d.type).toLowerCase()==='color')requireColorRevision(options);
@@ -290,12 +323,13 @@
    if(typeof gesture!=='string'||gesture==='__proto__'||gesture==='constructor'||gesture==='prototype')fail('INVALID_GESTURE','잘못된 드래그 식별자입니다.');
    g=session.gestures[gesture];
    if(g&&(g.context!==signature||g.id!==options.id||g.targets!==json(targets)))fail('GESTURE_INTERRUPTED','드래그 중 선택 항목 또는 컨트롤이 변경되었습니다.');
-   if(!g){if(projectRevision()===null)fail('GESTURE_UNAVAILABLE','이 호스트에서 연속 변경의 실행 취소를 확인할 수 없습니다.');g={context:signature,id:options.id,targets:json(targets),values:{},lastValues:null,revision:null};}
+   if(!g){if(projectRevision()===null)fail('GESTURE_UNAVAILABLE','이 호스트에서 연속 변경의 실행 취소를 확인할 수 없습니다.');g={context:signature,id:options.id,targets:json(targets),values:{},lastValues:null,revision:null,startRevision:options.expectedRevision};}
   }
+  if(operationWrite){if(typeof options.expectedRevision!=='number'||!isFinite(options.expectedRevision))fail('STALE_PROJECT','현재 프로젝트 상태를 새로고침하세요.');if(g&&g.lastValues){if(g.startRevision!==options.expectedRevision)fail('GESTURE_INTERRUPTED','드래그 시작 상태가 변경되었습니다.');}else capturedRevision(options);}
   for(i=0;i<targets.length;i++){
    var t=targets[i],old=readTarget(c,t),base=old;before.push(old);
-   if(g){var key=t.publicId;if(!g.values.hasOwnProperty(key))g.values[key]=clone(old);base=g.values[key];}
-   var value=options.relative?sum(base,options.value):clone(options.value);
+   if(g){var key=t.publicId;if(!g.values.hasOwnProperty(key))g.values[key]=operationTarget(t)?operationClone(old):clone(old);base=g.values[key];}
+   var value=options.relative?sum(base,options.value):(operationTarget(t)?operationClone(options.value):clone(options.value));
    if(String(d.type).toLowerCase()==='color'){
     if(!array(value)||(value.length!==3&&value.length!==4))fail('COLOR_INVALID_VALUE','RGB 또는 RGBA 색상값이 필요합니다.');
     if(array(old)&&old.length===4&&value.length===3)value.push(old[3]);
@@ -310,14 +344,14 @@
    snapshots.push(t.kind==='precomp'&&$.cpPrecomp.snapshotControl?$.cpPrecomp.snapshotControl(layerById(c,t.layerId),t.localId):null);after.push(value);
   }
   if(d.semantic==='selected-layer-color'){var colorChanges=[];for(i=0;i<targets.length;i++)colorChanges.push({id:targets[i].localId,value:after[i],expectedValue:before[i]});$.cpColors.preflight(selected(c),colorChanges,{time:c.time});}
-  if(g&&g.lastValues&&(g.revision===null||g.revision!==projectRevision()||json(before)!==json(g.lastValues)))fail('GESTURE_INTERRUPTED','드래그 중 다른 변경이 발생했습니다. 마우스를 놓고 다시 조정하세요.');
-  if(json(before)===json(after)&&!forceWrite)return{changedControls:0};
+  if(g&&g.lastValues&&(g.revision===null||g.revision!==projectRevision()||(operationWrite?!operationEqual(before,g.lastValues):json(before)!==json(g.lastValues))))fail('GESTURE_INTERRUPTED','드래그 중 다른 변경이 발생했습니다. 마우스를 놓고 다시 조정하세요.');
+  if((operationWrite?operationEqual(before,after):json(before)===json(after))&&!forceWrite)return{changedControls:0};
   if(glyphWrite){glyphGuard(options,c);if(projectRevision()!==glyphRevision)fail('STALE_PROJECT','Project changed during animated-font control preflight.');}
   if(g&&g.lastValues){
    // Consume only this gesture's verified latest native entry, then replace it.
    g.lastValues=null;g.revision=null;app.executeCommand(16);c=comp();guard(options.context,c);
    if(json(context(c))!==signature)fail('GESTURE_INTERRUPTED','실행 취소 중 선택 항목이 바뀌었습니다.');
-   for(i=0;i<targets.length;i++){before[i]=readTarget(c,targets[i]);if(json(before[i])!==json(g.values[targets[i].publicId]))fail('GESTURE_UNDO_FAILED','드래그 시작 값을 복원하지 못했습니다.');}
+   for(i=0;i<targets.length;i++){before[i]=readTarget(c,targets[i]);if(operationWrite?!operationEqual(before[i],g.values[targets[i].publicId]):json(before[i])!==json(g.values[targets[i].publicId]))fail('GESTURE_UNDO_FAILED','드래그 시작 값을 복원하지 못했습니다.');}
   }
   if(g)session.gestures[gesture]=g;
   var revisionBefore=projectRevision(),result=undo('Control',function(){var written=0;try{for(;written<targets.length;written++)writeTarget(c,targets[written],after[written]);}catch(error){var rollbackFrom=Math.min(written,targets.length-1);if(glyphWrite)rollbackFrom=written-1;for(var r=rollbackFrom;r>=0;r--)try{if(snapshots[r]&&$.cpPrecomp.restoreControl)$.cpPrecomp.restoreControl(layerById(c,targets[r].layerId),targets[r].localId,snapshots[r]);else writeTarget(c,targets[r],before[r]);}catch(rollback){error.rollbackError=error.rollbackError||String(rollback.message||rollback);}throw error;}return{changedControls:targets.length};},glyphWrite);
@@ -332,6 +366,8 @@
  function pasteData(c,data,targets,options){options=options||{};if(data.kind==='animated-font'){glyphGuard(options,c);return glyphReceipt(c,$.cpGlyph.restore(c,data,{atTime:c.time}));}if(data.kind==='texture'){if(targets.length!==1)fail('TEXTURE_TARGET_REQUIRED','텍스처를 붙일 레이어 하나를 선택하세요.');$.cpTexture.preflightTarget(targets[0]);return textureReceipt($.cpTexture.paste(targets[0],data,textureSource(data.sourceRef)));}if(data.kind==='precomp')return $.cpPrecomp.paste(c,data,{time:c.time},root);if(!targets.length)fail('NO_SELECTED_LAYERS','붙여넣을 레이어를 선택하세요.');var results=[],i;for(i=0;i<targets.length;i++){if(targets[i].locked)fail('LAYER_LOCKED','잠긴 레이어를 편집할 수 없습니다.');if(data.kind!=='overlay'&&$.cpUserPreset)$.cpUserPreset.preflight(targets[i],data,{time:c.time,replaceText:options.replaceText===true,overwrite:options.overwrite===true});}for(i=0;i<targets.length;i++){if(data.kind==='overlay')results.push($.cpOverlay.paste(targets[i],data,{undoGroup:false}));else if($.cpUserPreset)results.push($.cpUserPreset.apply(targets[i],data,{time:c.time,undoGroup:false,replaceText:options.replaceText===true,overwrite:options.overwrite===true}));else fail('PRESET_TYPE_UNSUPPORTED','지원하지 않는 사용자 프리셋입니다.');}return{results:results};}
  function presetAction(options){
   var c=comp();guard(options.context,c);capturedRevision(options);var state=getState(),items=filterApplied(state,options),action=options.action,ls=selected(c),i;
+  for(i=0;i<items.length;i++)if(items[i].kind==='operations'&&action!=='reveal'&&(action!=='remove'||options.scope==='in'||options.scope==='out'))fail('OPERATION_ACTION_UNVERIFIED','이 인스턴스 작업은 아직 정밀 검증되지 않았습니다.');
+  for(i=0;i<items.length;i++)if(items[i].kind==='operations'&&action==='remove'&&(typeof options.expectedRevision!=='number'||!isFinite(options.expectedRevision)))fail('STALE_PROJECT','현재 프로젝트 상태를 새로고침하세요.');
   if(action==='copy'){if(!items.length)fail('NO_PRESET','복사할 프리셋을 선택하세요.');session.clipboard=serializeApplied(c,items,options.scope);return{copied:session.clipboard.length};}
   if(action==='reveal'){if(!items.length)fail('NO_PRESET','프리셋을 선택하세요.');return{variantId:items[0].variantId};}
   if(action==='paste'&&!session.clipboard.length)fail('EMPTY_CLIPBOARD','먼저 프리셋을 복사하세요.');
@@ -347,7 +383,7 @@
    for(i=0;i<items.length;i++){var p=items[i],l=layerById(c,p.layerId);if(l.locked)fail('LAYER_LOCKED','잠긴 레이어는 변경할 수 없습니다.');
     if(action==='upgradeTimeline'&&p.kind==='texture')fail('TIMELINE_UNSUPPORTED','텍스처는 별도의 In/Out 마커를 사용하지 않습니다.');
     if(action==='upgradeTimeline')receipts.push(p.kind==='overlay'?$.cpOverlay.upgradeTimeline(l,p.instanceId,{undoGroup:false}):$.cpPrecomp.upgradeTimeline(l));
-    else if(action==='remove'){if(p.kind==='texture')receipts.push($.cpTexture.remove(l,p.instanceId));else if(p.kind==='precomp')receipts.push($.cpPrecomp.remove(l,p.instanceId));else if(options.scope==='in'||options.scope==='out')receipts.push($.cpOverlay.removeSide(l,p.instanceId,options.scope,{undoGroup:false}));else receipts.push($.cpOverlay.remove(l,p.instanceId,{undoGroup:false}));}
+    else if(action==='remove'){if(p.kind==='operations')receipts.push(operationBackend(l,p.instanceId).remove(l,p.instanceId,{undoGroup:false}));else if(p.kind==='texture')receipts.push($.cpTexture.remove(l,p.instanceId));else if(p.kind==='precomp')receipts.push($.cpPrecomp.remove(l,p.instanceId));else if(options.scope==='in'||options.scope==='out')receipts.push($.cpOverlay.removeSide(l,p.instanceId,options.scope,{undoGroup:false}));else receipts.push($.cpOverlay.remove(l,p.instanceId,{undoGroup:false}));}
     else if(action==='reset'){if(p.kind==='texture')receipts.push($.cpTexture.reset(l));else if(p.kind==='precomp')receipts.push($.cpPrecomp.reset(l,{scope:'all'}));else if(options.scope==='in'||options.scope==='out')receipts.push($.cpOverlay.resetSide(l,p.instanceId,options.scope,{undoGroup:false}));else receipts.push($.cpOverlay.reset(l,p.instanceId,{undoGroup:false}));}
     else fail('UNKNOWN_ACTION','지원하지 않는 프리셋 작업입니다.');
    }return{changed:receipts.length,receipts:receipts};
@@ -356,6 +392,7 @@
  function propertyAction(options){
   if(typeof options.id==='string'&&options.id.indexOf('palette:')===0)return paletteAction(options);
   var found=controlTargets(options),c=found.comp,targets=found.targets,i,action=options.action;
+  for(i=0;i<targets.length;i++)if(operationTarget(targets[i])){if(action!=='copy'&&action!=='paste'&&action!=='reset')fail('OPERATION_ACTION_UNVERIFIED','지원하지 않는 인스턴스 속성 작업입니다.');if(action==='reset'){if(found.definition.actions.join('|').indexOf('reset')<0)fail('OPERATION_ACTION_UNVERIFIED','이 속성의 초기화는 아직 검증되지 않았습니다.');options.value=found.definition.defaultValue;return setControl(options);}}
   if(targets.length&&targets[0].kind==='animated-font-recovery'){glyphGuard(options,c);if(action!=='reset')fail('GLYPH_ACTION_UNAVAILABLE','Only explicit marker Reset is supported.');if(found.definition.enabled===false)fail(found.definition.readOnlyCode||'GLYPH_RECOVERY_UNAVAILABLE',found.definition.readOnlyReason);if(targets.length!==1||selected(c).length!==1)fail('GLYPH_MULTI_EDIT_UNAVAILABLE','Select one animated-font root to recover its markers.');var recoveryRoot=layerById(c,targets[0].layerId),recoveryRevision=projectRevision();$.cpGlyph.preflightReset(recoveryRoot,{controlId:'inEnabled'});glyphGuard(options,c);if(projectRevision()!==recoveryRevision)fail('STALE_PROJECT','Project changed during marker recovery preflight.');return undo('Reset glyph markers',function(){return $.cpGlyph.reset(recoveryRoot,{controlId:'inEnabled'});},true);}
   if(found.definition.readOnlyCode==='CONTROL_OCCURRENCE_MISMATCH')fail('CONTROL_OCCURRENCE_MISMATCH',found.definition.readOnlyReason);
   if(action==='copy'){session.propertyClipboard={type:found.definition.type,value:readTarget(c,targets[0])};return{copied:true};}
